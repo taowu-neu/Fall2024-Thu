@@ -1,10 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
+import Header from './Components/Header';
+import { useState } from 'react';
+import Input from './Components/Input';
 
 export default function App() {
+  const appName = 'Tao App';
+
   return (
     <View style={styles.container}>
-      <Text>Welcome!</Text>
+      <Header name={appName} />
+        {/* <Text>Child 1</Text>
+
+      </Header> */}
+      <Input /> 
+  
       <StatusBar style="auto" />
     </View>
   );
