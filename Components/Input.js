@@ -26,6 +26,9 @@ const Input = () => {
       onChangeText={function (changedText) {
         setText(changedText);
       }}/>
+
+{isFocused && text.length > 0 && <Text>Counting character: {text.length}</Text>}
+
     </View>
   )
 }
