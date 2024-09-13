@@ -13,7 +13,7 @@ export default function App() {
         {/* <Text>Child 1</Text>
 
       </Header> */}
-      <Input /> 
+      <Input focus={true}/> 
   
       <StatusBar style="auto" />
     </View>
