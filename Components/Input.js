@@ -12,6 +12,7 @@ const Input = () => {
       keyboardType='default'
       style={{borderBottomColor: "purple", borderBottomWidth: 2}}
       value={text}
+      autoFocus={props.focus}
       onChangeText={function (changedText) {
         setText(changedText);
       }}/>
