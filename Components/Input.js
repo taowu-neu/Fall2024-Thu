@@ -1,4 +1,4 @@
-import { TextInput, Text, StatusBar, StyleSheet, View, Button } from 'react-native'
+import { TextInput, Text, StatusBar, StyleSheet, View, Button, Modal } from 'react-native'
 import React from 'react'
 import { useState } from 'react';
 
@@ -11,19 +11,29 @@ const Input = (props) => {
   }
 
   return (
-    <View>
-      <TextInput
-      placeholder='Type something'
-      keyboardType='default'
-      style={{borderBottomColor: "purple", borderBottomWidth: 2}}
-      value={text}
-      onChangeText={function (changedText) {
-        setText(changedText);
-      }}/>
-      <Button title='Confirm' onPress={handleConfirm}>Confirm</Button>
-    </View>
+    <Modal >
+      <View style={styles.container}>
+        <TextInput
+        placeholder='Type something'
+        keyboardType='default'
+        style={{borderBottomColor: "purple", borderBottomWidth: 2}}
+        value={text}
+        onChangeText={function (changedText) {
+          setText(changedText);
+        }}/>
+        <Button title='Confirm' onPress={handleConfirm}>Confirm</Button>
+      </View>
+    </Modal>
   )
 }
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fcf',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export default Input;
