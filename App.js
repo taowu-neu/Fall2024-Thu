@@ -21,7 +21,7 @@ export default function App() {
 
       </Header> */}
       <Button title='Add a goal' onPress={() => setModalVisible(true)}/>
-      <Input inputHandler={handleInputData}/> 
+      <Input inputHandler={handleInputData} isModalVisible={modalVisible}/> 
   
       <StatusBar style="auto" />
     </View>
