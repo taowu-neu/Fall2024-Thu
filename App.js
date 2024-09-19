@@ -6,7 +6,9 @@ import Input from './Components/Input';
 
 export default function App() {
   const appName = 'Tao App';
-  
+  const [receivedText, setReceivedText] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+
   handleInputData = (data) => {
     setReceivedText(data);
     setModalVisible(false);

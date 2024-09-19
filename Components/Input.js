@@ -2,7 +2,7 @@ import { TextInput, Text, StatusBar, StyleSheet, View, Button } from 'react-nati
 import React from 'react'
 import { useState } from 'react';
 
-const Input = () => {
+const Input = (props) => {
   const [text, setText] = useState('');
 
   const handleConfirm = () => {
