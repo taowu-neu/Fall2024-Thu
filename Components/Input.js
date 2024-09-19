@@ -11,7 +11,7 @@ const Input = (props) => {
   }
 
   return (
-    <Modal >
+    <Modal animationType='slide'>
       <View style={styles.container}>
         <TextInput
         placeholder='Type something'

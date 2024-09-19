@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View, Button } from 'react-native';
 import Header from './Components/Header';
 import { useState } from 'react';
 import Input from './Components/Input';
@@ -20,6 +20,7 @@ export default function App() {
         {/* <Text>Child 1</Text>
 
       </Header> */}
+      <Button title='Add a goal' onPress={() => setModalVisible(true)}/>
       <Input inputHandler={handleInputData}/> 
   
       <StatusBar style="auto" />
