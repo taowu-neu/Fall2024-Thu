@@ -6,6 +6,11 @@ import Input from './Components/Input';
 
 export default function App() {
   const appName = 'Tao App';
+  
+  handleInputData = (data) => {
+    setReceivedText(data);
+    setModalVisible(false);
+  }
 
   return (
     <View style={styles.container}>
@@ -13,7 +18,7 @@ export default function App() {
         {/* <Text>Child 1</Text>
 
       </Header> */}
-      <Input focus={true}/> 
+      <Input inputHandler={handleInputData}/> 
   
       <StatusBar style="auto" />
     </View>
