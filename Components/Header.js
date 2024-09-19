@@ -13,7 +13,7 @@ export default function Header(props) {
 
 const styles = StyleSheet.create({
     headerStyle: {
-      fontSize: 30,
+      fontSize: 20,
       borderColor: 'purple',
       borderWidth: 2,
       margin: 15,
