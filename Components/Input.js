@@ -20,8 +20,10 @@ const Input = (props) => {
             onChangeText={setText}
             autoFocus={props.focus}
           />
-          <Button title='Confirm' onPress={handleConfirm} />
-          <Button title='Cancel' onPress={props.cancelHandler} />
+          <View style={styles.buttonContainer}>
+            <Button title='Confirm' onPress={handleConfirm} />
+            <Button title='Cancel' onPress={props.cancelHandler} />
+          </View>
         </View>
       </View>
     </Modal>
@@ -48,6 +50,12 @@ const styles = StyleSheet.create({
     margin: 15,
     padding: 10,
     color: 'purple',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 10,
   },
 });
 
