@@ -12,11 +12,11 @@ export default function App() {
   const handleInputData = (data) => {
     setReceivedText(data);
     setModalVisible(false);
-  };
+  }
 
   const handleCancel = () => {
     setModalVisible(false);
-  };
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -24,16 +24,13 @@ export default function App() {
         <Header name={appName} />
         <Button title='Add a goal' onPress={() => setModalVisible(true)} />
       </View>
-      <Input
-        focus={true}
-        inputHandler={handleInputData}
-        isModalVisible={modalVisible}
-        cancelHandler={handleCancel}
-      />
+      <Input focus={true} inputHandler={handleInputData} isModalVisible={modalVisible} cancelHandler={handleCancel} />
       <View style={styles.bottomContainer}>
-        <Text>Received: {receivedText}</Text>
+        <View style={styles.textContainer}>
+          <Text style={styles.textStyle}>{receivedText}</Text>
+        </View>
       </View>
-
+  
       <StatusBar style="auto" />
     </SafeAreaView>
   );
@@ -45,6 +42,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'center',
   },
+  textStyle: {
+    color: 'darkblue',
+    padding: 10,
+  },
+  textContainer: {
+    backgroundColor: '#9C979E',
+    borderRadius: 10,
+    padding: 5,
+  },
   upperContainer: {
     flex: 1,
     backgroundColor: 'white',
@@ -52,8 +58,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   bottomContainer: {
-    flex: 1,
+    flex: 4,
     backgroundColor: '#FDD0E6',
     alignItems: 'center',
-  },
+    rowGap: 10,
+  }
 });
