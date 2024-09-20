@@ -6,13 +6,15 @@ const Input = (props) => {
 
   const handleConfirm = () => {
     props.inputHandler(text);
-    setText(''); 
+    setText('');  
   };
 
   const handleCancel = () => {
     props.cancelHandler();
-    setText(''); 
+    setText('');  
   };
+
+  const isConfirmDisabled = text.length < 3; 
 
   return (
     <Modal visible={props.isModalVisible} animationType='slide' transparent={true}>
@@ -27,7 +29,7 @@ const Input = (props) => {
             autoFocus={props.focus}
           />
           <View style={styles.buttonContainer}>
-            <Button title='Confirm' onPress={handleConfirm} />
+            <Button title='Confirm' onPress={handleConfirm} disabled={isConfirmDisabled} />
             <Button title='Cancel' onPress={handleCancel} />
           </View>
         </View>
