@@ -1,4 +1,4 @@
-import { TextInput, StyleSheet, View, Button, Modal } from 'react-native';
+import { TextInput, StyleSheet, View, Button, Modal, Image } from 'react-native';
 import React, { useState } from 'react';
 
 const Input = (props) => {
@@ -11,7 +11,7 @@ const Input = (props) => {
 
   const handleCancel = () => {
     props.cancelHandler();
-    setText('');  
+    setText(''); 
   };
 
   const isConfirmDisabled = text.length < 3; 
@@ -20,6 +20,14 @@ const Input = (props) => {
     <Modal visible={props.isModalVisible} animationType='slide' transparent={true}>
       <View style={styles.container}>
         <View style={styles.innerContainer}>
+          <Image
+            source={{ uri: 'https://example.com/sample-image.jpg' }}
+            style={styles.imageStyle}
+          />
+          <Image
+            source={require('../assets/local-image.png')}
+            style={styles.imageStyle}
+          />
           <TextInput
             placeholder='Type something'
             keyboardType='default'
@@ -64,6 +72,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     marginTop: 10,
+  },
+  imageStyle: {
+    width: 100,
+    height: 100,
+    marginBottom: 15,
   },
 });
 
