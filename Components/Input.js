@@ -6,6 +6,12 @@ const Input = (props) => {
 
   const handleConfirm = () => {
     props.inputHandler(text);
+    setText(''); 
+  };
+
+  const handleCancel = () => {
+    props.cancelHandler();
+    setText(''); 
   };
 
   return (
@@ -22,7 +28,7 @@ const Input = (props) => {
           />
           <View style={styles.buttonContainer}>
             <Button title='Confirm' onPress={handleConfirm} />
-            <Button title='Cancel' onPress={props.cancelHandler} />
+            <Button title='Cancel' onPress={handleCancel} />
           </View>
         </View>
       </View>
