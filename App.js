@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import Header from './Components/Header';
 import { useState } from 'react';
 import Input from './Components/Input';
@@ -9,27 +9,31 @@ export default function App() {
   const [receivedText, setReceivedText] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
 
-  handleInputData = (data) => {
+  const handleInputData = (data) => {
     setReceivedText(data);
     setModalVisible(false);
-  }
+  };
+
+  const handleCancel = () => {
+    setModalVisible(false);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.topContainer}>
-      <Header name={appName} />
-        {/* <Text>Child 1</Text>
-
-      </Header> */}
-        <Button title='Add a goal' onPress={() => setModalVisible(true)}/>
+      <View style={styles.upperContainer}>
+        <Header name={appName} />
+        <Button title='Add a goal' onPress={() => setModalVisible(true)} />
       </View>
-      <Input focus={true} inputHandler={handleInputData} isModalVisible={modalVisible}/> 
+      <Input
+        focus={true}
+        inputHandler={handleInputData}
+        isModalVisible={modalVisible}
+        cancelHandler={handleCancel}
+      />
       <View style={styles.bottomContainer}>
-        <View style={styles.textContainer}>
-        <Text style={styles.textStyle}>Received: {receivedText}</Text>
-        </View>
+        <Text>Received: {receivedText}</Text>
       </View>
-  
+
       <StatusBar style="auto" />
     </SafeAreaView>
   );
@@ -41,25 +45,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'center',
   },
-  textStyle: {
-    color: 'darkblue',
-    padding: 10,
-  },
-  textContainer: {
-    backgroundColor: '#9C979E',
-    borderRadius: 10,
-    padding: 5,
-  },
-  topContainer: {
+  upperContainer: {
     flex: 1,
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
   },
   bottomContainer: {
-    flex: 4,
+    flex: 1,
     backgroundColor: '#FDD0E6',
     alignItems: 'center',
-    rowGap: 10,
-  }
+  },
 });
