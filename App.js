@@ -1,16 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Button, SafeAreaView, StyleSheet, Text, View, FlatList } from 'react-native';
 import Header from './Components/Header';
 import { useState } from 'react';
 import Input from './Components/Input';
 
 export default function App() {
   const appName = 'Tao App';
-  const [receivedText, setReceivedText] = useState('');
+  const [goals, setGoals] = useState([]); 
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleInputData = (data) => {
-    setReceivedText(data);
+    const newGoal = { text: data, id: Math.random().toString() }; 
+    setGoals((currentGoals) => [...currentGoals, newGoal]); 
     setModalVisible(false);
   }
 
@@ -26,9 +27,15 @@ export default function App() {
       </View>
       <Input focus={true} inputHandler={handleInputData} isModalVisible={modalVisible} cancelHandler={handleCancel} />
       <View style={styles.bottomContainer}>
-        <View style={styles.textContainer}>
-          <Text style={styles.textStyle}>{receivedText}</Text>
-        </View>
+        <FlatList 
+          data={goals}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View style={styles.textContainer}>
+              <Text style={styles.textStyle}>{item.text}</Text>
+            </View>
+          )}
+        />
       </View>
   
       <StatusBar style="auto" />
@@ -50,6 +57,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#9C979E',
     borderRadius: 10,
     padding: 5,
+    marginVertical: 5,
   },
   upperContainer: {
     flex: 1,
@@ -61,6 +69,7 @@ const styles = StyleSheet.create({
     flex: 4,
     backgroundColor: '#FDD0E6',
     alignItems: 'center',
-    rowGap: 10,
+    width: '100%',
   }
 });
+
