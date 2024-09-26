@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button, SafeAreaView, StyleSheet, Text, View, FlatList } from 'react-native';
+import { Button, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import Header from './Components/Header';
 import { useState } from 'react';
 import Input from './Components/Input';
@@ -16,7 +16,6 @@ export default function App() {
     };
     
     setGoals((currentGoals) => [...currentGoals, newGoal]);
-    
     setModalVisible(false);
   }
 
@@ -32,15 +31,11 @@ export default function App() {
       </View>
       <Input focus={true} inputHandler={handleInputData} isModalVisible={modalVisible} cancelHandler={handleCancel} />
       <View style={styles.bottomContainer}>
-        <FlatList 
-          data={goals}
-          renderItem={({ item }) => (
-            <View style={styles.textContainer}>
-              <Text style={styles.textStyle}>{item.text}</Text>
-            </View>
-          )}
-          keyExtractor={(item) => item.id}
-        />
+        {goals.map((item) => (
+          <View key={item.id} style={styles.textContainer}>
+            <Text style={styles.textStyle}>{item.text}</Text>
+          </View>
+        ))}
       </View>
   
       <StatusBar style="auto" />
