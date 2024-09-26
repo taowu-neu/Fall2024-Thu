@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button, SafeAreaView, StyleSheet, Text, View, ScrollView } from 'react-native';
+import { Button, SafeAreaView, StyleSheet, Text, View, FlatList } from 'react-native';
 import Header from './Components/Header';
 import { useState } from 'react';
 import Input from './Components/Input';
@@ -30,13 +30,17 @@ export default function App() {
         <Button title='Add a goal' onPress={() => setModalVisible(true)} />
       </View>
       <Input focus={true} inputHandler={handleInputData} isModalVisible={modalVisible} cancelHandler={handleCancel} />
-      <ScrollView style={styles.bottomContainer} contentContainerStyle={styles.scrollViewContent}>
-        {goals.map((item) => (
-          <View key={item.id} style={styles.textContainer}>
+      <FlatList 
+        style={styles.bottomContainer} 
+        data={goals} 
+        renderItem={({ item }) => (
+          <View style={styles.textContainer}>
             <Text style={styles.textStyle}>{item.text}</Text>
           </View>
-        ))}
-      </ScrollView>
+        )}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.scrollViewContent}
+      />
   
       <StatusBar style="auto" />
     </SafeAreaView>
@@ -45,9 +49,8 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1, // 确保 SafeAreaView 占据整个屏幕
     backgroundColor: '#fff',
-    justifyContent: 'center',
   },
   textStyle: {
     color: 'darkblue',
@@ -60,13 +63,13 @@ const styles = StyleSheet.create({
     marginVertical: 5, 
   },
   upperContainer: {
-    flex: 1,
+    flex: 1, // 保持1:4的比例
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
   },
   bottomContainer: {
-    flex: 4,
+    flex: 4, // 保持1:4的比例
     backgroundColor: '#FDD0E6',
     width: '100%', 
     padding: 10,
