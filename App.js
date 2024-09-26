@@ -2,11 +2,10 @@ import { StatusBar } from "expo-status-bar";
 import {
   Button,
   SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
   View,
   FlatList,
+  Text,
+  StyleSheet,
 } from "react-native";
 import Header from "./Components/Header";
 import { useState } from "react";
@@ -18,20 +17,20 @@ export default function App() {
   const [modalVisible, setModalVisible] = useState(false);
   const [goals, setGoals] = useState([]);
   const appName = "My app!";
-  // update to receive data
+
   function handleInputData(data) {
     console.log("App.js ", data);
-    let newGoal = { text: data, id: Math.random() };
-    //make a new obj and store the received data as the obj's text property
+    let newGoal = { text: data, id: Math.random().toString() };
     setGoals((prevGoals) => {
       return [...prevGoals, newGoal];
     });
-    // setReceivedData(data);
     setModalVisible(false);
   }
+
   function dismissModal() {
     setModalVisible(false);
   }
+
   function handleGoalDelete(deletedId) {
     setGoals((prevGoals) => {
       return prevGoals.filter((goalObj) => {
@@ -39,6 +38,7 @@ export default function App() {
       });
     });
   }
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
@@ -59,21 +59,20 @@ export default function App() {
       />
       <View style={styles.bottomView}>
         <FlatList
-          contentContainerStyle={styles.scrollViewContainer}
+          contentContainerStyle={
+            goals.length === 0 ? styles.scrollViewContainer : null
+          }
           data={goals}
           renderItem={({ item }) => {
             return <GoalItem deleteHandler={handleGoalDelete} goalObj={item} />;
           }}
+          ListEmptyComponent={() => (
+            <View style={styles.noGoalsContainer}>
+              <Text style={styles.noGoalsText}>No goals to show</Text>
+            </View>
+          )}
+          keyExtractor={(item) => item.id}
         />
-        {/* <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-          {goals.map((goalObj) => {
-            return (
-              <View key={goalObj.id} style={styles.textContainer}>
-                <Text style={styles.text}>{goalObj.text}</Text>
-              </View>
-            );
-          })}
-        </ScrollView> */}
       </View>
     </SafeAreaView>
   );
@@ -83,17 +82,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    // alignItems: "center",
     justifyContent: "center",
   },
   scrollViewContainer: {
     alignItems: "center",
+    paddingTop: 10,
   },
-
   topView: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
-  bottomView: { flex: 4, backgroundColor: "#dcd" },
+  bottomView: { 
+    flex: 4, 
+    backgroundColor: "#dcd" 
+  },
+  noGoalsText: {
+    fontSize: 19,
+    color: "purple",
+  },
+  noGoalsContainer: {
+    alignItems: "center",
+  },
 });
