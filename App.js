@@ -6,6 +6,7 @@ import {
   FlatList,
   Text,
   StyleSheet,
+  Alert,
 } from "react-native";
 import Header from "./Components/Header";
 import { useState } from "react";
@@ -37,6 +38,19 @@ export default function App() {
         return goalObj.id != deletedId;
       });
     });
+  }
+
+  function handleDeleteAll() {
+    Alert.alert("Delete Goals", "Are you sure to delete all goal items?", [
+      {
+        text: "No",
+        style: "cancel",
+      },
+      {
+        text: "Yes",
+        onPress: () => setGoals([]),
+      },
+    ]);
   }
 
   return (
@@ -78,6 +92,13 @@ export default function App() {
               <Text style={styles.goalsHeaderText}>My goals</Text>
             ) : null
           }
+          ListFooterComponent={() =>
+            goals.length > 0 ? (
+              <View style={styles.footerContainer}>
+                <Button title="Delete All" color="blue" onPress={handleDeleteAll} />
+              </View>
+            ) : null
+          }
           keyExtractor={(item) => item.id}
         />
       </View>
@@ -116,5 +137,9 @@ const styles = StyleSheet.create({
     color: "purple",
     textAlign: "center",
     marginVertical: 10,
+  },
+  footerContainer: {
+    marginTop: 20,
+    marginBottom: 10,
   },
 });
