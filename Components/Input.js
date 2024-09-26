@@ -1,91 +1,126 @@
-import { StyleSheet, TextInput, Text, Button, View, Modal, Image } from 'react-native';
-import React, { useState } from 'react';
+import {
+  Alert,
+  Button,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Image,
+} from "react-native";
+import React, { useState } from "react";
 
-const Input = (props) => {
-    const [isBlurred, setIsBlurred] = useState(false);
-    const [text, setText] = useState('');
+export default function Input({
+  textInputFocus,
+  inputHandler,
+  isModalVisible,
+  dismissModal,
+}) {
+  const [text, setText] = useState("");
+  const [blur, setBlur] = useState(false);
+  const minimumChar = 3;
+  function handleConfirm() {
+    // console.log(text);
+    inputHandler(text);
+    setText("");
+  }
+  function handleCancel() {
+    // hide the modal
+    Alert.alert("Cancel", "Are you sure you want to cancel", [
+      { text: "cancel", style: "cancel" },
+      {
+        text: "ok",
+        onPress: () => {
+          setText("");
+          dismissModal();
+        },
+      },
+    ]);
+  }
+  return (
+    <Modal animationType="slide" visible={isModalVisible} transparent={true}>
+      <View style={styles.container}>
+        <View style={styles.modalContainer}>
+          <Image
+            source={{
+              uri: "https://cdn-icons-png.flaticon.com/512/2617/2617812.png",
+            }}
+            style={styles.image}
+            alt="Image of a an arrow"
+          />
+          <Image
+            source={require("../assets/tem.png")}
+            style={styles.image}
+            alt="Image of a an arrow"
+          />
 
-    const handleConfirm = () => {
-        setText('');
-        props.onConfirm();
-        props.inputHandler(text);
-    };
+          <TextInput
+            autoFocus={textInputFocus}
+            placeholder="Type something"
+            autoCorrect={true}
+            keyboardType="default"
+            value={text}
+            style={styles.input}
+            onChangeText={(changedText) => {
+              setText(changedText);
+            }}
+            onBlur={() => {
+              setBlur(true);
+            }}
+            onFocus={() => {
+              setBlur(false);
+            }}
+          />
 
-    const handleCancel = () => {
-        setText('');
-        props.onCancel();
-    };
-
-    return (
-        <Modal animationType='slide' visible={props.isModalVisible} transparent={true}>
-            <View style={styles.modalBackground}>
-                <View style={styles.modalContainer}>
-                    <Image
-                        style={styles.imageStyle}
-                        source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2617/2617812.png' }}
-                        alt="image from URL"
-                    />
-                    <Image
-                        style={styles.imageStyle}
-                        source={require('../assets/tem.png')}
-                        alt="local image"
-                    />
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Type something"
-                        onChangeText={(newText) => {
-                            setText(newText);
-                            if (isBlurred) {
-                                setIsBlurred(false);
-                            }
-                        }}
-                        onBlur={() => setIsBlurred(true)}
-                        onFocus={() => setIsBlurred(false)}
-                        value={text}
-                    />
-                    {isBlurred && <Text>Thank you</Text>}
-                    <View style={styles.buttonContainer}>
-                        <Button title='Cancel' onPress={handleCancel} color="#007AFF" />
-                        <Button title='Confirm' onPress={handleConfirm} color="#007AFF" disabled={!text} />
-                    </View>
-                </View>
+          {blur ? (
+            text.length >= minimumChar ? (
+              <Text>Thank you</Text>
+            ) : (
+              <Text>Please type more than {minimumChar} characters</Text>
+            )
+          ) : (
+            text && <Text>{text.length}</Text>
+          )}
+          <View style={styles.buttonsRow}>
+            <View style={styles.buttonContainer}>
+              <Button title="Cancel" onPress={handleCancel} />
             </View>
-        </Modal>
-    );
+            <View style={styles.buttonContainer}>
+              <Button
+                disabled={text.length < minimumChar}
+                title="Confirm"
+                onPress={handleConfirm}
+              />
+            </View>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
 }
 
 const styles = StyleSheet.create({
-    modalBackground: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalContainer: {
-      width: 300,
-      padding: 20,
-      alignItems: 'center',
-      backgroundColor: 'white',
-      borderRadius: 10,
-    },
-    input: {
-      width: '100%',
-      height: 40,
-      marginBottom: 20,
-      paddingLeft: 10,
-      borderColor: '#A020F0',
-      borderWidth: 1,
-    },
-    buttonContainer: {
-      width: '100%',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-
-    },
-    imageStyle: {
-      width: 100,
-      height: 100,
-    },
+  container: {
+    flex: 1,
+    // backgroundColor: "white",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  input: {
+    borderColor: "purple",
+    borderWidth: 2,
+    padding: 5,
+    marginVertical: 10,
+  },
+  modalContainer: {
+    borderRadius: 6,
+    backgroundColor: "#999",
+    alignItems: "center",
+  },
+  buttonContainer: {
+    width: "30%",
+    margin: 10,
+  },
+  buttonsRow: { flexDirection: "row" },
+  image: { width: 100, height: 100 },
 });
-
-export default Input;

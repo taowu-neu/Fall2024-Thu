@@ -1,33 +1,30 @@
-import React from 'react';
+import { Button, StyleSheet, Text, View } from "react-native";
+import React from "react";
 
-import { View, Text, StyleSheet, Button } from 'react-native';
-
-const GoalItem = ({ goal, onDelete }) => {
+export default function GoalItem({ goalObj, deleteHandler }) {
+  function handleDelete() {
+    console.log("deleted");
+    deleteHandler(goalObj.id);
+  }
   return (
     <View style={styles.textContainer}>
-      <Text style={styles.textStyle}>
-        {goal.text}
-      </Text>aaß
-      <Button title="X" color="white" 
-      onPress={() => onDelete(goal.id)} />
+      <Text style={styles.text}>{goalObj.text}</Text>
+      <Button title="X" color="grey" onPress={handleDelete} />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
-    textStyle: {
-        color: 'darkmagenta',
-        padding: 10,
-        },
-    textContainer: {
-        backgroundColor: 'grey',
-        padding: 5,
-        marginVertical: 5,
-        borderRadius: 10,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
+  text: {
+    color: "purple",
+    padding: 5,
+    fontSize: 30,
+  },
+  textContainer: {
+    backgroundColor: "#aaa",
+    borderRadius: 5,
+    marginTop: 50,
+    flexDirection: "row",
+    alignItems: "center",
+  },
 });
-
-export default GoalItem;
