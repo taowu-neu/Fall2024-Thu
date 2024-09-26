@@ -8,7 +8,7 @@ const GoalItem = ({ goal, onDelete }) => {
       <Text style={styles.textStyle}>
         {goal.text}
       </Text>
-      <Button title="X" color="black" 
+      <Button title="X" color="white" 
       onPress={() => onDelete(goal.id)} />
     </View>
   );

@@ -1,56 +1,79 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button, SafeAreaView, StyleSheet, Text, View, FlatList } from 'react-native';
+import { StyleSheet, View, Text, Button, SafeAreaView, ScrollView, FlatList } from 'react-native';
+
 import Header from './Components/Header';
-import { useState } from 'react';
 import Input from './Components/Input';
+import { useState } from 'react';
+import GoalItem from './Components/GoalItem';
 
 export default function App() {
-  const appName = 'Tao App';
-  const [goals, setGoals] = useState([]);  
-  const [modalVisible, setModalVisible] = useState(false);
+  const appName = "Tao app";
 
-  const handleInputData = (data) => {
+  const [receivedText, setReceivedText] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [goals, setGoals] = useState([]);
+
+  function handleInputData(data) {
+    console.log('Callback function called with:', data);
     const newGoal = {
-      text: data, 
-      id: Math.random().toString()
+      text: data,
+      id: Math.random(),
     };
-    
+
     setGoals((currentGoals) => [...currentGoals, newGoal]);
+    setReceivedText(data);
     setModalVisible(false);
   }
+
+  const handleDeleteGoal = (goalId) => {
+    setGoals((currentGoals) => currentGoals.filter((goal) => goal.id !== goalId));
+  };
+
+  const handleConfirm = () => {
+    setModalVisible(false);
+  };
 
   const handleCancel = () => {
     setModalVisible(false);
-  }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.upperContainer}>
-        <Header name={appName} />
+        <Header app_name={appName} theme="dark" />
         <Button title='Add a goal' onPress={() => setModalVisible(true)} />
       </View>
-      <Input focus={true} inputHandler={handleInputData} isModalVisible={modalVisible} cancelHandler={handleCancel} />
-      <FlatList 
-        style={styles.bottomContainer} 
-        data={goals} 
-        renderItem={({ item }) => (
-          <View style={styles.textContainer}>
-            <Text style={styles.textStyle}>{item.text}</Text>
-          </View>
-        )}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.scrollViewContent}
+
+
+      <Input
+        inputHandler={handleInputData}
+        isModalVisible={modalVisible}
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
       />
-  
-      <StatusBar style="auto" />
+  <View style={styles.bottomContainer}>
+
+    {goals.length === 0 ? (
+      <Text style={styles.textStyle}></Text>
+    ) : (
+      <FlatList renderItem={({ item }) => {
+        return (
+          <GoalItem goal={item} onDelete={handleDeleteGoal} />)
+      }} data={goals}>
+      </FlatList>
+
+    )}
+    </View>
+    <StatusBar style="auto" />
     </SafeAreaView>
-  );
-}
+    );
+    }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, // 确保 SafeAreaView 占据整个屏幕
+    flex: 1,
     backgroundColor: '#fff',
+    justifyContent: 'center',
   },
   textStyle: {
     color: 'darkblue',
@@ -60,22 +83,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#9C979E',
     borderRadius: 10,
     padding: 5,
-    marginVertical: 5, 
   },
   upperContainer: {
-    flex: 1, // 保持1:4的比例
+    flex: 1,
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
   },
   bottomContainer: {
-    flex: 4, // 保持1:4的比例
+    flex: 4,
     backgroundColor: '#FDD0E6',
-    width: '100%', 
-    padding: 10,
-  },
-  scrollViewContent: {
     alignItems: 'center',
     rowGap: 10,
-  },
+  }
 });
