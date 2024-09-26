@@ -6,12 +6,17 @@ import Input from './Components/Input';
 
 export default function App() {
   const appName = 'Tao App';
-  const [goals, setGoals] = useState([]); 
+  const [goals, setGoals] = useState([]);  
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleInputData = (data) => {
-    const newGoal = { text: data, id: Math.random().toString() }; 
-    setGoals((currentGoals) => [...currentGoals, newGoal]); 
+    const newGoal = {
+      text: data, 
+      id: Math.random().toString()
+    };
+    
+    setGoals((currentGoals) => [...currentGoals, newGoal]);
+    
     setModalVisible(false);
   }
 
@@ -29,12 +34,12 @@ export default function App() {
       <View style={styles.bottomContainer}>
         <FlatList 
           data={goals}
-          keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View style={styles.textContainer}>
               <Text style={styles.textStyle}>{item.text}</Text>
             </View>
           )}
+          keyExtractor={(item) => item.id}
         />
       </View>
   
@@ -57,7 +62,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#9C979E',
     borderRadius: 10,
     padding: 5,
-    marginVertical: 5,
+    marginVertical: 5, 
   },
   upperContainer: {
     flex: 1,
@@ -69,7 +74,8 @@ const styles = StyleSheet.create({
     flex: 4,
     backgroundColor: '#FDD0E6',
     alignItems: 'center',
-    width: '100%',
+    rowGap: 10,
+    width: '100%', 
+    padding: 10,
   }
 });
-
