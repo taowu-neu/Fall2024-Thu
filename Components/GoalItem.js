@@ -23,8 +23,11 @@ const styles = StyleSheet.create({
   textContainer: {
     backgroundColor: "#aaa",
     borderRadius: 5,
-    marginTop: 50,
+    marginTop: 20, 
     flexDirection: "row",
     alignItems: "center",
+    padding: 10, 
+    width: 100, 
+    justifyContent: "space-between", 
   },
 });

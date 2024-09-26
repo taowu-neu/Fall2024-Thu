@@ -60,7 +60,9 @@ export default function App() {
       <View style={styles.bottomView}>
         <FlatList
           contentContainerStyle={
-            goals.length === 0 ? styles.scrollViewContainer : null
+            goals.length === 0
+              ? styles.scrollViewContainer
+              : [styles.scrollViewContainer, { alignItems: "center" }]
           }
           data={goals}
           renderItem={({ item }) => {
@@ -71,6 +73,11 @@ export default function App() {
               <Text style={styles.noGoalsText}>No goals to show</Text>
             </View>
           )}
+          ListHeaderComponent={() =>
+            goals.length > 0 ? (
+              <Text style={styles.goalsHeaderText}>My goals</Text>
+            ) : null
+          }
           keyExtractor={(item) => item.id}
         />
       </View>
@@ -93,9 +100,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  bottomView: { 
-    flex: 4, 
-    backgroundColor: "#dcd" 
+  bottomView: {
+    flex: 4,
+    backgroundColor: "#dcd",
   },
   noGoalsText: {
     fontSize: 19,
@@ -103,5 +110,11 @@ const styles = StyleSheet.create({
   },
   noGoalsContainer: {
     alignItems: "center",
+  },
+  goalsHeaderText: {
+    fontSize: 19,
+    color: "purple",
+    textAlign: "center",
+    marginVertical: 10,
   },
 });
