@@ -1,78 +1,126 @@
-import { TextInput, Text, StatusBar, StyleSheet, View, Button, Modal } from 'react-native'
-import React from 'react'
-import { useState } from 'react';
+import {
+  Alert,
+  Button,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Image,
+} from "react-native";
+import React, { useState } from "react";
 
-const Input = (props) => {
-  const [text, setText] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
-
-  const handleFocus = () => {
-    setIsFocused(true);
+export default function Input({
+  textInputFocus,
+  inputHandler,
+  isModalVisible,
+  dismissModal,
+}) {
+  const [text, setText] = useState("");
+  const [blur, setBlur] = useState(false);
+  const minimumChar = 3;
+  function handleConfirm() {
+    // console.log(text);
+    inputHandler(text);
+    setText("");
   }
-  const handleBlur = () => {
-    setIsFocused(false);
+  function handleCancel() {
+    // hide the modal
+    Alert.alert("Cancel", "Are you sure you want to cancel", [
+      { text: "cancel", style: "cancel" },
+      {
+        text: "ok",
+        onPress: () => {
+          setText("");
+          dismissModal();
+        },
+      },
+    ]);
   }
-
-  const handleConfirm = () => {
-    console.log('user type:', text);
-    props.inputHandler(text);
-  }
-
   return (
-    <Modal visible={props.isModalVisible} animationType='slide' transparent={true}>
+    <Modal animationType="slide" visible={isModalVisible} transparent={true}>
       <View style={styles.container}>
-        <View style={styles.innerContainer}>
+        <View style={styles.modalContainer}>
+          <Image
+            source={{
+              uri: "https://cdn-icons-png.flaticon.com/512/2617/2617812.png",
+            }}
+            style={styles.image}
+            alt="Image of a an arrow"
+          />
+          <Image
+            source={require("../assets/tem.png")}
+            style={styles.image}
+            alt="Image of a an arrow"
+          />
+
           <TextInput
-            placeholder='Type something'
-            keyboardType='default'
-            style={styles.inputContainer}
+            autoFocus={textInputFocus}
+            placeholder="Type something"
+            autoCorrect={true}
+            keyboardType="default"
             value={text}
-            autoFocus={props.focus}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            onChangeText={function (changedText) {
+            style={styles.input}
+            onChangeText={(changedText) => {
               setText(changedText);
             }}
+            onBlur={() => {
+              setBlur(true);
+            }}
+            onFocus={() => {
+              setBlur(false);
+            }}
           />
-          <Button title='Confirm' onPress={handleConfirm}>Confirm</Button>
+
+          {blur ? (
+            text.length >= minimumChar ? (
+              <Text>Thank you</Text>
+            ) : (
+              <Text>Please type more than {minimumChar} characters</Text>
+            )
+          ) : (
+            text && <Text>{text.length}</Text>
+          )}
+          <View style={styles.buttonsRow}>
+            <View style={styles.buttonContainer}>
+              <Button title="Cancel" onPress={handleCancel} />
+            </View>
+            <View style={styles.buttonContainer}>
+              <Button
+                disabled={text.length < minimumChar}
+                title="Confirm"
+                onPress={handleConfirm}
+              />
+            </View>
+          </View>
         </View>
       </View>
     </Modal>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    // backgroundColor: "white",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  innerContainer: {
-    width: '50%',
-    backgroundColor: '#E3DEE5',
-    borderRadius: 20,
-    padding: 40,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-  },
-  buttonStyle: {
-    width: '30%',
-    margin: 5,
-    backgroundColor: 'lightblue'
-  },
-  inputContainer: {
-    fontSize: 15,
-    borderColor: 'purple',
+  input: {
+    borderColor: "purple",
     borderWidth: 2,
-    margin: 15,
-    padding: 10,
-    color: 'purple',
-    width:135,
-  }
+    padding: 5,
+    marginVertical: 10,
+  },
+  modalContainer: {
+    borderRadius: 6,
+    backgroundColor: "#999",
+    alignItems: "center",
+  },
+  buttonContainer: {
+    width: "30%",
+    margin: 10,
+  },
+  buttonsRow: { flexDirection: "row" },
+  image: { width: 100, height: 100 },
 });
-
-export default Input;
