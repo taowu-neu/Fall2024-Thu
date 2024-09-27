@@ -73,6 +73,7 @@ export default function App() {
       />
       <View style={styles.bottomView}>
         <FlatList
+          style={{ width: "100%" }}
           contentContainerStyle={
             goals.length === 0
               ? styles.scrollViewContainer
@@ -99,6 +100,7 @@ export default function App() {
               </View>
             ) : null
           }
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
           keyExtractor={(item) => item.id}
         />
       </View>
@@ -141,5 +143,11 @@ const styles = StyleSheet.create({
   footerContainer: {
     marginTop: 20,
     marginBottom: 10,
+  },
+  separator: {
+    height: 3,
+    width: 130,
+    backgroundColor: "gray",
+    marginVertical: 5,
   },
 });
