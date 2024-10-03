@@ -13,18 +13,14 @@ import { useState } from "react";
 import Input from "./Input";
 import GoalItem from "./GoalItem";
 
-export default function Home() {
-  const [receivedData, setReceivedData] = useState("");
+export default function Home({ navigation }) { // 接收 navigation prop
   const [modalVisible, setModalVisible] = useState(false);
   const [goals, setGoals] = useState([]);
   const appName = "My app!";
 
   function handleInputData(data) {
-    console.log("App.js ", data);
     let newGoal = { text: data, id: Math.random().toString() };
-    setGoals((prevGoals) => {
-      return [...prevGoals, newGoal];
-    });
+    setGoals((prevGoals) => [...prevGoals, newGoal]);
     setModalVisible(false);
   }
 
@@ -34,22 +30,19 @@ export default function Home() {
 
   function handleGoalDelete(deletedId) {
     setGoals((prevGoals) => {
-      return prevGoals.filter((goalObj) => {
-        return goalObj.id != deletedId;
-      });
+      return prevGoals.filter((goalObj) => goalObj.id !== deletedId);
     });
+  }
+
+  // 定义导航到 GoalDetails 的回调函数
+  function handleGoalDetails(goal) {
+    navigation.navigate("Details", { goalText: goal.text });
   }
 
   function handleDeleteAll() {
     Alert.alert("Delete Goals", "Are you sure to delete all goal items?", [
-      {
-        text: "No",
-        style: "cancel",
-      },
-      {
-        text: "Yes",
-        onPress: () => setGoals([]),
-      },
+      { text: "No", style: "cancel" },
+      { text: "Yes", onPress: () => setGoals([]) },
     ]);
   }
 
@@ -60,9 +53,7 @@ export default function Home() {
         <Header name={appName}></Header>
         <Button
           title="Add a Goal"
-          onPress={function () {
-            setModalVisible(true);
-          }}
+          onPress={() => setModalVisible(true)}
         />
       </View>
       <Input
@@ -80,9 +71,13 @@ export default function Home() {
               : [styles.scrollViewContainer, { alignItems: "center" }]
           }
           data={goals}
-          renderItem={({ item }) => {
-            return <GoalItem deleteHandler={handleGoalDelete} goalObj={item} />;
-          }}
+          renderItem={({ item }) => (
+            <GoalItem
+              deleteHandler={handleGoalDelete}
+              goalObj={item}
+              onPressDetails={() => handleGoalDetails(item)} // 传递导航回调函数
+            />
+          )}
           ListEmptyComponent={() => (
             <View style={styles.noGoalsContainer}>
               <Text style={styles.noGoalsText}>No goals to show</Text>
