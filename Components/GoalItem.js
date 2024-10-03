@@ -7,11 +7,15 @@ export default function GoalItem({ goalObj, deleteHandler, onPressDetails }) {
     deleteHandler(goalObj.id);
   }
 
+  function handlePressDetails() {
+    onPressDetails(goalObj);
+  }
+
   return (
     <View style={styles.textContainer}>
       <Text style={styles.text}>{goalObj.text}</Text>
       <Button title="X" color="grey" onPress={handleDelete} />
-      <Button title="i" color="blue" onPress={onPressDetails} />
+      <Button title="i" color="blue" onPress={handlePressDetails} />
     </View>
   );
 }

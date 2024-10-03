@@ -13,7 +13,7 @@ import { useState } from "react";
 import Input from "./Input";
 import GoalItem from "./GoalItem";
 
-export default function Home({ navigation }) { // 接收 navigation prop
+export default function Home({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [goals, setGoals] = useState([]);
   const appName = "My app!";
@@ -29,14 +29,11 @@ export default function Home({ navigation }) { // 接收 navigation prop
   }
 
   function handleGoalDelete(deletedId) {
-    setGoals((prevGoals) => {
-      return prevGoals.filter((goalObj) => goalObj.id !== deletedId);
-    });
+    setGoals((prevGoals) => prevGoals.filter((goalObj) => goalObj.id !== deletedId));
   }
 
-  // 定义导航到 GoalDetails 的回调函数
   function handleGoalDetails(goal) {
-    navigation.navigate("Details", { goalText: goal.text });
+    navigation.navigate("Details", { goalObj: goal });
   }
 
   function handleDeleteAll() {
@@ -51,10 +48,7 @@ export default function Home({ navigation }) { // 接收 navigation prop
       <StatusBar style="auto" />
       <View style={styles.topView}>
         <Header name={appName}></Header>
-        <Button
-          title="Add a Goal"
-          onPress={() => setModalVisible(true)}
-        />
+        <Button title="Add a Goal" onPress={() => setModalVisible(true)} />
       </View>
       <Input
         textInputFocus={true}
@@ -75,7 +69,7 @@ export default function Home({ navigation }) { // 接收 navigation prop
             <GoalItem
               deleteHandler={handleGoalDelete}
               goalObj={item}
-              onPressDetails={() => handleGoalDetails(item)} // 传递导航回调函数
+              onPressDetails={handleGoalDetails}
             />
           )}
           ListEmptyComponent={() => (
