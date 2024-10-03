@@ -2,7 +2,6 @@ import { StatusBar } from "expo-status-bar";
 import {
   Button,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -19,7 +18,8 @@ export default function Home({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [goals, setGoals] = useState([]);
   const appName = "My app!";
-  
+
+  // handle input data from the input component
   function handleInputData(data) {
     let newGoal = { text: data, id: Math.random() };
     setGoals((prevGoals) => [...prevGoals, newGoal]);
@@ -30,12 +30,14 @@ export default function Home({ navigation }) {
     setModalVisible(false);
   }
 
+  // delete a goal based on its id
   function handleGoalDelete(deletedId) {
     setGoals((prevGoals) => {
       return prevGoals.filter((goalObj) => goalObj.id !== deletedId);
     });
   }
 
+  // delete all goals with confirmation alert
   function deleteAll() {
     Alert.alert("Delete All", "Are you sure you want to delete all goals?", [
       {
@@ -58,12 +60,14 @@ export default function Home({ navigation }) {
           onPress={() => setModalVisible(true)}
         />
       </View>
+
       <Input
         textInputFocus={true}
         inputHandler={handleInputData}
         isModalVisible={modalVisible}
         dismissModal={dismissModal}
       />
+
       <View style={styles.bottomView}>
         <FlatList
           ItemSeparatorComponent={
@@ -86,7 +90,7 @@ export default function Home({ navigation }) {
           renderItem={({ item }) => {
             return (
               <GoalItem
-                navigation={navigation} // Pass navigation to GoalItem
+                navigation={navigation}
                 deleteHandler={handleGoalDelete}
                 goalObj={item}
               />

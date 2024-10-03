@@ -1,35 +1,42 @@
 import { Button, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useState, useLayoutEffect } from "react";
 
-export default function GoalItem({ goalObj, deleteHandler, navigation }) {
-  function handleDelete() {
-    deleteHandler(goalObj.id);
-  }
+export default function GoalDetails({ navigation, route }) {
+  const [isWarning, setIsWarning] = useState(false);
 
-  function handlePress() {
-    navigation.navigate("Details", { goalData: goalObj });
-  }
+  const goalData = route.params?.goalData;
+
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: isWarning ? "Warning!" : goalData?.text || "More Details",
+      headerRight: () => (
+        <Button
+          title="Warning"
+          onPress={() => setIsWarning(true)} 
+        />
+      ),
+    });
+  }, [navigation, isWarning, goalData]);
 
   return (
-    <View style={styles.textContainer}>
-      <Text style={styles.text}>{goalObj.text}</Text>
-      <Button title="X" color="grey" onPress={handleDelete} />
-      <Button title="i" color="grey" onPress={handlePress} />
+    <View>
+      {goalData ? (
+        <Text style={[styles.text, isWarning && { color: "red" }]}>
+          This is details of a goal with text {goalData.text} and id {goalData.id}
+        </Text>
+      ) : (
+        <Text style={[styles.text, isWarning && { color: "red" }]}>
+          More details
+        </Text>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   text: {
-    color: "purple",
-    padding: 5,
-    fontSize: 30,
-  },
-  textContainer: {
-    backgroundColor: "#aaa",
-    borderRadius: 5,
-    marginVertical: 20,
-    flexDirection: "row",
-    alignItems: "center",
+    fontSize: 15,
+    color: "black",
   },
 });
