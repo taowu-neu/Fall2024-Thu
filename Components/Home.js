@@ -7,6 +7,7 @@ import {
   Text,
   View,
   FlatList,
+  Alert,
 } from "react-native";
 import Header from "./Header";
 import { useState } from "react";
@@ -18,34 +19,23 @@ export default function Home({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [goals, setGoals] = useState([]);
   const appName = "My app!";
-  // update to receive data
+  
   function handleInputData(data) {
-    console.log("App.js ", data);
     let newGoal = { text: data, id: Math.random() };
-    //make a new obj and store the received data as the obj's text property
-    setGoals((prevGoals) => {
-      return [...prevGoals, newGoal];
-    });
-    // setReceivedData(data);
+    setGoals((prevGoals) => [...prevGoals, newGoal]);
     setModalVisible(false);
   }
+
   function dismissModal() {
     setModalVisible(false);
   }
+
   function handleGoalDelete(deletedId) {
     setGoals((prevGoals) => {
-      return prevGoals.filter((goalObj) => {
-        return goalObj.id != deletedId;
-      });
+      return prevGoals.filter((goalObj) => goalObj.id !== deletedId);
     });
   }
 
-  function handleGoalPress(pressedGoal) {
-    //receive the goal obj
-    console.log(pressedGoal);
-    // navigate to GoalDetails and pass goal obj as params
-    navigation.navigate("Details", { goalData: pressedGoal });
-  }
   function deleteAll() {
     Alert.alert("Delete All", "Are you sure you want to delete all goals?", [
       {
@@ -65,9 +55,7 @@ export default function Home({ navigation }) {
         <Header name={appName}></Header>
         <Button
           title="Add a Goal"
-          onPress={function () {
-            setModalVisible(true);
-          }}
+          onPress={() => setModalVisible(true)}
         />
       </View>
       <Input
@@ -86,36 +74,25 @@ export default function Home({ navigation }) {
               }}
             />
           }
-          ListEmptyComponent={
-            <Text style={styles.header}>No goals to show</Text>
-          }
+          ListEmptyComponent={<Text style={styles.header}>No goals to show</Text>}
           ListHeaderComponent={
-            goals.length && <Text style={styles.header}>My Goals List</Text>
+            goals.length ? <Text style={styles.header}>My Goals List</Text> : null
           }
           ListFooterComponent={
-            goals.length && <Button title="Delete all" onPress={deleteAll} />
+            goals.length ? <Button title="Delete all" onPress={deleteAll} /> : null
           }
           contentContainerStyle={styles.scrollViewContainer}
           data={goals}
           renderItem={({ item }) => {
             return (
               <GoalItem
-                pressHandler={handleGoalPress}
+                navigation={navigation} // Pass navigation to GoalItem
                 deleteHandler={handleGoalDelete}
                 goalObj={item}
               />
             );
           }}
         />
-        {/* <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-          {goals.map((goalObj) => {
-            return (
-              <View key={goalObj.id} style={styles.textContainer}>
-                <Text style={styles.text}>{goalObj.text}</Text>
-              </View>
-            );
-          })}
-        </ScrollView> */}
       </View>
     </SafeAreaView>
   );
@@ -125,19 +102,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    // alignItems: "center",
     justifyContent: "center",
   },
   scrollViewContainer: {
     alignItems: "center",
   },
-
   topView: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
-  bottomView: { flex: 4, backgroundColor: "#dcd" },
+  bottomView: {
+    flex: 4,
+    backgroundColor: "#dcd",
+  },
   header: {
     color: "indigo",
     fontSize: 25,
