@@ -1,7 +1,10 @@
 import { Button, StyleSheet, Text, View } from "react-native";
 import React from "react";
+import { useNavigation } from "@react-navigation/native";
 
-export default function GoalItem({ goalObj, deleteHandler, navigation }) {
+export default function GoalItem({ goalObj, deleteHandler }) {
+  const navigation = useNavigation();
+
   function handleDelete() {
     deleteHandler(goalObj.id);
   }
@@ -14,7 +17,7 @@ export default function GoalItem({ goalObj, deleteHandler, navigation }) {
     <View style={styles.textContainer}>
       <Text style={styles.text}>{goalObj.text}</Text>
       <Button title="X" color="grey" onPress={handleDelete} />
-      <Button title="i" color="grey" onPress={handlePress} />
+      <Button title="i" color="grey" onPress={handlePress} /> 
     </View>
   );
 }

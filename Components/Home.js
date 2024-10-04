@@ -90,7 +90,6 @@ export default function Home({ navigation }) {
           renderItem={({ item }) => {
             return (
               <GoalItem
-                navigation={navigation}
                 deleteHandler={handleGoalDelete}
                 goalObj={item}
               />

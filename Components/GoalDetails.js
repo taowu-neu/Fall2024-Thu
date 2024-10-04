@@ -3,9 +3,7 @@ import React, { useState, useLayoutEffect } from "react";
 
 export default function GoalDetails({ navigation, route }) {
   const [isWarning, setIsWarning] = useState(false);
-
   const goalData = route.params?.goalData;
-
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -13,7 +11,7 @@ export default function GoalDetails({ navigation, route }) {
       headerRight: () => (
         <Button
           title="Warning"
-          onPress={() => setIsWarning(true)} 
+          onPress={() => setIsWarning(true)}
         />
       ),
     });
