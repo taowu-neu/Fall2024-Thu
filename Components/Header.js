@@ -4,7 +4,6 @@ import React from "react";
 export default function Header({ name }) {
   return (
     <View>
-      {/* use the prop here */}
       <Text style={styles.text}>Welcome to {name}</Text>
     </View>
   );
