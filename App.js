@@ -20,15 +20,25 @@ export default function App() {
           name="Home"
           component={Home}
           options={{
-            title: "All My Goals",
+            title: "My Goals",
           }}
         />
         <Stack.Screen
           name="Details"
           component={GoalDetails}
-          options={({ navigation, route }) => {
+          options={({ route }) => {
             return {
-              title: route.params ? route.params.goalObj.text : "More Details",
+              title: route.params ? route.params.goalData.text : "More Details",
+              // headerRight: () => {
+              //   return (
+              //     <Button
+              //       title="Warning"
+              //       onPress={() => {
+              //         console.log("warning");
+              //       }}
+              //     />
+              //   );
+              // },
             };
           }}
         />

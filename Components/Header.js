@@ -4,16 +4,17 @@ import React from "react";
 export default function Header({ name }) {
   return (
     <View>
-      <Text style={styles.textStyle}>Welcome to {name}!</Text>
+      {/* use the prop here */}
+      <Text style={styles.text}>Welcome to {name}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  textStyle: {
-    color: "purple",
+  text: {
+    color: "darkmagenta",
     fontSize: 25,
-    borderColor: "purple",
+    borderColor: "darkmagenta",
     borderWidth: 2,
     padding: 5,
     marginBottom: 10,

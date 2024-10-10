@@ -1,43 +1,52 @@
 import { StatusBar } from "expo-status-bar";
 import {
-  Alert,
-  FlatList,
+  Button,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   View,
+  FlatList,
 } from "react-native";
 import Header from "./Header";
 import { useState } from "react";
 import Input from "./Input";
 import GoalItem from "./GoalItem";
-import PressableButton from "./PressableButton"; // 引入通用的Pressable Button组件
+import PressableButton from "./PressableButton";
 
 export default function Home({ navigation }) {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [receivedData, setReceivedData] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
   const [goals, setGoals] = useState([]);
-  const appName = "My app";
-
+  const appName = "My app!";
+  // update to receive data
   function handleInputData(data) {
+    console.log("App.js ", data);
     let newGoal = { text: data, id: Math.random() };
+    //make a new obj and store the received data as the obj's text property
     setGoals((prevGoals) => {
       return [...prevGoals, newGoal];
     });
-    setIsModalVisible(false);
+    // setReceivedData(data);
+    setModalVisible(false);
   }
-
   function dismissModal() {
-    setIsModalVisible(false);
+    setModalVisible(false);
   }
-
-  function goalDeleteHandler(deletedId) {
+  function handleGoalDelete(deletedId) {
     setGoals((prevGoals) => {
-      return prevGoals.filter((goal) => {
-        return goal.id != deletedId;
+      return prevGoals.filter((goalObj) => {
+        return goalObj.id != deletedId;
       });
     });
   }
 
+  // function handleGoalPress(pressedGoal) {
+  //   //receive the goal obj
+  //   console.log(pressedGoal);
+  //   // navigate to GoalDetails and pass goal obj as params
+  //   navigation.navigate("Details", { goalData: pressedGoal });
+  // }
   function deleteAll() {
     Alert.alert("Delete All", "Are you sure you want to delete all goals?", [
       {
@@ -54,34 +63,30 @@ export default function Home({ navigation }) {
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
       <View style={styles.topView}>
-        <Header name={appName} />
-        {/* 使用通用的PressableButton替代添加目标的Button */}
+        <Header name={appName}></Header>
         <PressableButton
-          title="Add a Goal"
-          onPress={() => {
-            setIsModalVisible(true);
+          pressedHandler={function () {
+            setModalVisible(true);
           }}
-        />
+          componentStyle={{ backgroundColor: "purple" }}
+        >
+          <Text style={styles.buttonText}>Add a Goal</Text>
+        </PressableButton>
+        {/* <Button
+          title="Add a Goal"
+          onPress={function () {
+            setModalVisible(true);
+          }}
+        /> */}
       </View>
       <Input
         textInputFocus={true}
         inputHandler={handleInputData}
-        modalVisible={isModalVisible}
+        isModalVisible={modalVisible}
         dismissModal={dismissModal}
       />
       <View style={styles.bottomView}>
         <FlatList
-          ListEmptyComponent={
-            <Text style={styles.header}>No goals to show</Text>
-          }
-          ListHeaderComponent={
-            goals.length && <Text style={styles.header}>My Goals List</Text>
-          }
-          ListFooterComponent={
-            goals.length && (
-              <PressableButton title="Delete all" onPress={deleteAll} />
-            )
-          }
           ItemSeparatorComponent={
             <View
               style={{
@@ -90,17 +95,30 @@ export default function Home({ navigation }) {
               }}
             />
           }
-          contentContainerStyle={styles.scrollViewContent}
+          ListEmptyComponent={
+            <Text style={styles.header}>No goals to show</Text>
+          }
+          ListHeaderComponent={
+            goals.length && <Text style={styles.header}>My Goals List</Text>
+          }
+          ListFooterComponent={
+            goals.length && <Button title="Delete all" onPress={deleteAll} />
+          }
+          contentContainerStyle={styles.scrollViewContainer}
           data={goals}
           renderItem={({ item }) => {
-            return (
-              <GoalItem
-                goalObj={item}
-                handleDelete={goalDeleteHandler}
-              />
-            );
+            return <GoalItem deleteHandler={handleGoalDelete} goalObj={item} />;
           }}
         />
+        {/* <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+          {goals.map((goalObj) => {
+            return (
+              <View key={goalObj.id} style={styles.textContainer}>
+                <Text style={styles.text}>{goalObj.text}</Text>
+              </View>
+            );
+          })}
+        </ScrollView> */}
       </View>
     </SafeAreaView>
   );
@@ -110,16 +128,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    // alignItems: "center",
     justifyContent: "center",
   },
+  scrollViewContainer: {
+    alignItems: "center",
+  },
+
+  topView: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  bottomView: { flex: 4, backgroundColor: "#dcd" },
   header: {
     color: "indigo",
     fontSize: 25,
     marginTop: 10,
   },
-  topView: { flex: 1, alignItems: "center", justifyContent: "space-evenly" },
-  bottomView: { flex: 4, backgroundColor: "#dcd" },
-  scrollViewContent: {
-    alignItems: "center",
+  buttonText: {
+    color: "white",
+    fontSize: 20,
   },
 });
