@@ -10,6 +10,11 @@ export default function GoalItem({ goalObj, handleDelete }) {
       onPress={() => {
         navigation.navigate("Details", { goalObj });
       }}
+      android_ripple={{
+        color: "purple",
+        borderless: false,
+        radius: 50,
+      }}
     >
       <View style={styles.textContainer}>
         <Text style={styles.text}>{goalObj.text}</Text>
