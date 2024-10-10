@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import PressableButton from "./PressableButton";
 import { MaterialIcons } from '@expo/vector-icons'; 
 
-export default function GoalItem({ goalObj, deleteHandler }) {
+export default function GoalItem({ goalObj, deleteHandler, onPressIn, onPressOut }) {
   const navigation = useNavigation();
 
   function handleDelete() {
@@ -29,7 +29,6 @@ export default function GoalItem({ goalObj, deleteHandler }) {
   }
 
   function handlePress() {
-    // Navigate to the Details screen with goal data
     navigation.navigate("Details", { goalData: goalObj });
   }
 
@@ -38,6 +37,8 @@ export default function GoalItem({ goalObj, deleteHandler }) {
       <Pressable
         onPress={handlePress}
         onLongPress={handleDelete}
+        onPressIn={onPressIn}
+        onPressOut={onPressOut}
         style={({ pressed }) => {
           return [styles.horizontalContainer, pressed && styles.pressedStyle];
         }}
@@ -45,13 +46,11 @@ export default function GoalItem({ goalObj, deleteHandler }) {
       >
         <Text style={styles.text}>{goalObj.text}</Text>
 
-        {/* Delete button icon */}
         <PressableButton
           componentStyle={styles.deleteButton}
           pressedHandler={handleDelete}
           pressedStyle={styles.pressedStyle}
         >
-          {/* Replace Text component with a MaterialIcons delete icon */}
           <MaterialIcons name="delete" size={24} color="white" />
         </PressableButton>
       </Pressable>
