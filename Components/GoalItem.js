@@ -15,6 +15,12 @@ export default function GoalItem({ goalObj, handleDelete }) {
         borderless: false,
         radius: 50,
       }}
+      style={({ pressed }) => [
+        {
+          backgroundColor: pressed ? "#ddd" : "#aaa",
+        },
+        styles.textContainer,
+      ]}
     >
       <View style={styles.textContainer}>
         <Text style={styles.text}>{goalObj.text}</Text>
