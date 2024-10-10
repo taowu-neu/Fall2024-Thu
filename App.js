@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import GoalDetails from "./Components/GoalDetails";
 import { Button } from "react-native";
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -28,16 +29,6 @@ export default function App() {
           options={({ navigation, route }) => {
             return {
               title: route.params ? route.params.goalObj.text : "More Details",
-              // headerRight: () => {
-              //   return (
-              //     <Button
-              //       title="Warning"
-              //       onPress={() => {
-              //         console.log("warning");
-              //       }}
-              //     />
-              //   );
-              // },
             };
           }}
         />
