@@ -1,21 +1,40 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
+import { useNavigation } from "@react-navigation/native";
+import PressableButton from "./PressableButton";
+import { MaterialIcons } from '@expo/vector-icons';
 
-export default function GoalItem({ goalObj, deleteHandler, onPressDetails }) {
+export default function GoalItem({ goalObj, deleteHandler }) {
+  const navigation = useNavigation();
 
   function handleDelete() {
+    console.log("deleted");
     deleteHandler(goalObj.id);
   }
-
-  function handlePressDetails() {
-    onPressDetails(goalObj);
+  function handlePress() {
+    navigation.navigate("Details", { goalData: goalObj });
   }
-
   return (
     <View style={styles.textContainer}>
-      <Text style={styles.text}>{goalObj.text}</Text>
-      <Button title="X" color="grey" onPress={handleDelete} />
-      <Button title="i" color="blue" onPress={handlePressDetails} />
+      <Pressable
+        onPress={handlePress}
+        style={({ pressed }) => {
+          return [styles.horizontalContainer, pressed && styles.pressedStyle];
+        }}
+        android_ripple={{ color: "red", radius: 25 }}
+      >
+        <Text style={styles.text}>{goalObj.text}</Text>
+
+        {/* Icon for delete button */}
+        <PressableButton
+          componentStyle={styles.deleteButton}
+          pressedHandler={handleDelete}
+          pressedStyle={styles.pressedStyle}
+        >
+          {/* Replace Text component with a MaterialIcons delete icon */}
+          <MaterialIcons name="delete" size={24} color="white" />
+        </PressableButton>
+      </Pressable>
     </View>
   );
 }
@@ -24,18 +43,24 @@ const styles = StyleSheet.create({
   text: {
     color: "purple",
     padding: 5,
-    fontSize: 16,
+    fontSize: 30,
   },
   textContainer: {
-    backgroundColor: "#aaa",
     borderRadius: 5,
+    marginVertical: 20,
     flexDirection: "row",
     alignItems: "center",
-    padding: 10,
-    justifyContent: "space-between",
-    alignSelf: "center",
-    maxWidth: '90%',
-    flexWrap: 'wrap',
-    marginVertical: 5,
+  },
+  horizontalContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#aaa",
+  },
+  pressedStyle: {
+    opacity: 0.5,
+    backgroundColor: "red",
+  },
+  deleteButton: {
+    backgroundColor: "grey",
   },
 });
