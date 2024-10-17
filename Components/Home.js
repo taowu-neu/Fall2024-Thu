@@ -9,10 +9,13 @@ import {
   FlatList,
 } from "react-native";
 import Header from "./Header";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "./Input";
 import GoalItem from "./GoalItem";
 import PressableButton from "./PressableButton";
+import { database } from "../Firebase/firebaseSetup";
+import { writeToDB } from "../Firebase/firestoreHelper";
+import { collection, onSnapshot } from "firebase/firestore";
 
 export default function Home({ navigation }) {
   const [receivedData, setReceivedData] = useState("");
@@ -20,13 +23,23 @@ export default function Home({ navigation }) {
   const [goals, setGoals] = useState([]);
   const appName = "My app!";
   // update to receive data
+  useEffect(() => {
+    onSnapshot(collection(database, "goals"), (querySnapshot) => {
+      let newArray = [];
+      querySnapshot.forEach((docSnapshot) => {
+        newArray.push({ ...docSnapshot.data(), id: docSnapshot.id });
+      });
+      setGoals(newArray);
+    });
+  }, []);
   function handleInputData(data) {
     console.log("App.js ", data);
-    let newGoal = { text: data, id: Math.random() };
+    let newGoal = { text: data };
+    writeToDB(newGoal, "goals");
     //make a new obj and store the received data as the obj's text property
-    setGoals((prevGoals) => {
-      return [...prevGoals, newGoal];
-    });
+    // setGoals((prevGoals) => {
+    //   return [...prevGoals, newGoal];
+    // });
     // setReceivedData(data);
     setModalVisible(false);
   }
