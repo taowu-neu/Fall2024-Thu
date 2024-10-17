@@ -49,7 +49,7 @@ export default function Input({
             alt="Image of a an arrow"
           />
           <Image
-            source={require("../assets/goal.png")}
+            source={require("../assets/tem.png")}
             style={styles.image}
             alt="Image of a an arrow"
           />
