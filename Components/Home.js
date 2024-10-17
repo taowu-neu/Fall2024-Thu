@@ -7,12 +7,20 @@ import {
   Text,
   View,
   FlatList,
+  Alert,
 } from "react-native";
 import Header from "./Header";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "./Input";
 import GoalItem from "./GoalItem";
 import PressableButton from "./PressableButton";
+import { database } from "../Firebase/firebaseSetup";
+import {
+  writeToDB,
+  deleteFromDB,
+  deleteAllFromDB,
+} from "../Firebase/firestoreHelper";
+import { collection, onSnapshot } from "firebase/firestore";
 
 export default function Home({ navigation }) {
   const [receivedData, setReceivedData] = useState("");
@@ -20,13 +28,23 @@ export default function Home({ navigation }) {
   const [goals, setGoals] = useState([]);
   const appName = "My app!";
   // update to receive data
+  useEffect(() => {
+    onSnapshot(collection(database, "goals"), (querySnapshot) => {
+      let newArray = [];
+      querySnapshot.forEach((docSnapshot) => {
+        newArray.push({ ...docSnapshot.data(), id: docSnapshot.id });
+      });
+      setGoals(newArray);
+    });
+  }, []);
   function handleInputData(data) {
     console.log("App.js ", data);
-    let newGoal = { text: data, id: Math.random() };
+    let newGoal = { text: data };
+    writeToDB(newGoal, "goals");
     //make a new obj and store the received data as the obj's text property
-    setGoals((prevGoals) => {
-      return [...prevGoals, newGoal];
-    });
+    // setGoals((prevGoals) => {
+    //   return [...prevGoals, newGoal];
+    // });
     // setReceivedData(data);
     setModalVisible(false);
   }
@@ -34,11 +52,12 @@ export default function Home({ navigation }) {
     setModalVisible(false);
   }
   function handleGoalDelete(deletedId) {
-    setGoals((prevGoals) => {
-      return prevGoals.filter((goalObj) => {
-        return goalObj.id != deletedId;
-      });
-    });
+    // setGoals((prevGoals) => {
+    //   return prevGoals.filter((goalObj) => {
+    //     return goalObj.id != deletedId;
+    //   });
+    // });
+    deleteFromDB(deletedId, "goals");
   }
 
   // function handleGoalPress(pressedGoal) {
@@ -52,7 +71,8 @@ export default function Home({ navigation }) {
       {
         text: "Yes",
         onPress: () => {
-          setGoals([]);
+          // setGoals([]);
+          deleteAllFromDB("goals");
         },
       },
       { text: "No", style: "cancel" },
@@ -87,14 +107,16 @@ export default function Home({ navigation }) {
       />
       <View style={styles.bottomView}>
         <FlatList
-          ItemSeparatorComponent={
-            <View
-              style={{
-                height: 5,
-                backgroundColor: "gray",
-              }}
-            />
-          }
+          ItemSeparatorComponent={({ highlighted }) => {
+            return (
+              <View
+                style={{
+                  height: 5,
+                  backgroundColor: highlighted ? "purple" : "gray",
+                }}
+              />
+            );
+          }}
           ListEmptyComponent={
             <Text style={styles.header}>No goals to show</Text>
           }
@@ -106,8 +128,14 @@ export default function Home({ navigation }) {
           }
           contentContainerStyle={styles.scrollViewContainer}
           data={goals}
-          renderItem={({ item }) => {
-            return <GoalItem deleteHandler={handleGoalDelete} goalObj={item} />;
+          renderItem={({ item, separators }) => {
+            return (
+              <GoalItem
+                separators={separators}
+                deleteHandler={handleGoalDelete}
+                goalObj={item}
+              />
+            );
           }}
         />
         {/* <ScrollView contentContainerStyle={styles.scrollViewContainer}>

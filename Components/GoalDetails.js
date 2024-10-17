@@ -1,26 +1,25 @@
 import { Button, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import PressableButton from "./PressableButton";
-import { Ionicons } from '@expo/vector-icons';
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 export default function GoalDetails({ navigation, route }) {
   const [warning, setWarning] = useState(false);
-
   function warningHandler() {
     setWarning(true);
     navigation.setOptions({ title: "Warning!" });
   }
-
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => {
         return (
+          // <Button title="Warning" color="white" onPress={warningHandler} />
           <PressableButton
             pressedHandler={warningHandler}
-            componentStyle={styles.warningButton}
-            pressedStyle={styles.pressedStyle}
+            componentStyle={{ backgroundColor: "purple" }}
+            pressedStyle={{ opacity: 0.5, backgroundColor: "purple" }}
           >
-            <Ionicons name="warning-outline" size={24} color="white" />
+            <AntDesign name="warning" size={24} color="white" />
           </PressableButton>
         );
       },
@@ -49,14 +48,5 @@ export default function GoalDetails({ navigation, route }) {
 const styles = StyleSheet.create({
   warningStyle: {
     color: "red",
-  },
-  warningButton: {
-    backgroundColor: "purple",
-    padding: 10,
-    borderRadius: 5,
-  },
-  pressedStyle: {
-    backgroundColor: "darkred",
-    opacity: 0.8,
   },
 });
