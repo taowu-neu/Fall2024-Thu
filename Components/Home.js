@@ -7,6 +7,7 @@ import {
   Text,
   View,
   FlatList,
+  Alert,
 } from "react-native";
 import Header from "./Header";
 import { useEffect, useState } from "react";
@@ -14,7 +15,11 @@ import Input from "./Input";
 import GoalItem from "./GoalItem";
 import PressableButton from "./PressableButton";
 import { database } from "../Firebase/firebaseSetup";
-import { writeToDB, deleteFromDB } from "../Firebase/firestoreHelper";
+import {
+  writeToDB,
+  deleteFromDB,
+  deleteAllFromDB,
+} from "../Firebase/firestoreHelper";
 import { collection, onSnapshot } from "firebase/firestore";
 
 export default function Home({ navigation }) {
@@ -66,7 +71,8 @@ export default function Home({ navigation }) {
       {
         text: "Yes",
         onPress: () => {
-          setGoals([]);
+          // setGoals([]);
+          deleteAllFromDB("goals");
         },
       },
       { text: "No", style: "cancel" },
