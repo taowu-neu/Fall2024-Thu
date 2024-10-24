@@ -29,13 +29,17 @@ export default function Home({ navigation }) {
   const appName = "My app!";
   // update to receive data
   useEffect(() => {
-    onSnapshot(collection(database, "goals"), (querySnapshot) => {
-      let newArray = [];
-      querySnapshot.forEach((docSnapshot) => {
-        newArray.push({ ...docSnapshot.data(), id: docSnapshot.id });
-      });
-      setGoals(newArray);
-    });
+    const unsubscribe = onSnapshot(
+      collection(database, "goals"),
+      (querySnapshot) => {
+        let newArray = [];
+        querySnapshot.forEach((docSnapshot) => {
+          newArray.push({ ...docSnapshot.data(), id: docSnapshot.id });
+        });
+        setGoals(newArray);
+      }
+    );
+    return () => unsubscribe();
   }, []);
   function handleInputData(data) {
     console.log("App.js ", data);
