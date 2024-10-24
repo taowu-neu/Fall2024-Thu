@@ -44,3 +44,32 @@ export async function deleteAllFromDB(collectionName) {
     console.log("delete all ", err);
   }
 }
+
+export async function addDocToSubcollection(data, collectionName, subCollectionName, docId) {
+  try {
+    const docRef = await addDoc(
+      collection(database, collectionName, docId, subCollectionName),
+      data
+    );
+    console.log("Document written with ID: ", docRef.id);
+  } catch (err) {
+    console.error("Error adding document: ", err);
+  }
+}
+
+export async function getDocsFromSubcollection(collectionName, subCollectionName, docId) {
+  try {
+    const querySnapshot = await getDocs(
+      collection(database, collectionName, docId, subCollectionName)
+    );
+    let documents = [];
+    querySnapshot.forEach((docSnapshot) => {
+      documents.push({ ...docSnapshot.data(), id: docSnapshot.id });
+    });
+    return documents;
+  } catch (err) {
+    console.error("Error getting documents: ", err);
+    return [];
+  }
+}
+
