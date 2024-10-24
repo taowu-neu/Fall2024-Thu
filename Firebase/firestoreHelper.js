@@ -4,7 +4,7 @@ import {
   deleteDoc,
   doc,
   getDocs,
-  updateDoc,
+  setDoc,
 } from "firebase/firestore";
 import { database } from "./firebaseSetup";
 
@@ -25,25 +25,22 @@ export async function deleteFromDB(deletedId, collectionName) {
   }
 }
 
+export async function updateDB(id, data, collectionName) {
+  try {
+    await setDoc(doc(database, collectionName, id), data, { merge: true });
+  } catch (err) {
+    console.log("update DB ", err);
+  }
+}
+
 export async function deleteAllFromDB(collectionName) {
   try {
+    //get all the documents in the collection
     const querySnapshot = await getDocs(collection(database, collectionName));
     querySnapshot.forEach((docSnapshot) => {
       deleteDoc(doc(database, collectionName, docSnapshot.id));
     });
   } catch (err) {
     console.log("delete all ", err);
-  }
-}
-
-export async function addWarningToGoal(goalId, collectionName) {
-  try {
-    const goalRef = doc(database, collectionName, goalId);
-    await updateDoc(goalRef, {
-      warning: true,
-    });
-    console.log("Warning added to goal with ID:", goalId);
-  } catch (err) {
-    console.log("warning error", err);
   }
 }
