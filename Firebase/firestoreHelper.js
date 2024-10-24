@@ -73,3 +73,12 @@ export async function getDocsFromSubcollection(collectionName, subCollectionName
   }
 }
 
+export async function deleteDocFromSubcollection(collectionName, subCollectionName, docId, subDocId) {
+  try {
+    await deleteDoc(doc(database, collectionName, docId, subCollectionName, subDocId));
+    console.log(`Document with ID ${subDocId} deleted successfully.`);
+  } catch (err) {
+    console.error("Error deleting document: ", err);
+  }
+}
+

@@ -7,10 +7,12 @@ import {
   FlatList,
   Button,
   Alert,
+  Pressable,
 } from "react-native";
 import {
   addDocToSubcollection,
   getDocsFromSubcollection,
+  deleteDocFromSubcollection,
 } from "../Firebase/firestoreHelper";
 
 export default function GoalUsers({ goalId }) {
@@ -20,7 +22,6 @@ export default function GoalUsers({ goalId }) {
   useEffect(() => {
     async function fetchUsers() {
       try {
-
         const existingUsers = await getDocsFromSubcollection(
           "goals",
           "users",
@@ -81,6 +82,17 @@ export default function GoalUsers({ goalId }) {
     }
   }
 
+  async function handleDeleteUser(userId) {
+    try {
+      await deleteDocFromSubcollection("goals", "users", goalId, userId);
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+      Alert.alert("User Deleted", `User with ID: ${userId} has been deleted.`);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      Alert.alert("Error", "Could not delete user.");
+    }
+  }
+
   if (loading) {
     return <ActivityIndicator size="large" color="purple" />;
   }
@@ -92,7 +104,15 @@ export default function GoalUsers({ goalId }) {
         data={users}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <Text style={styles.userText}>{item.name}</Text>
+          <View style={styles.userContainer}>
+            <Text style={styles.userText}>{item.name}</Text>
+            <Pressable
+              style={styles.deleteButton}
+              onPress={() => handleDeleteUser(item.id)}
+            >
+              <Text style={styles.deleteButtonText}>Delete</Text>
+            </Pressable>
+          </View>
         )}
         ListEmptyComponent={<Text>No users found.</Text>}
       />
@@ -113,8 +133,22 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
   },
+  userContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 5,
+  },
   userText: {
     fontSize: 16,
-    marginVertical: 2,
+  },
+  deleteButton: {
+    backgroundColor: "red",
+    padding: 5,
+    borderRadius: 5,
+  },
+  deleteButtonText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
