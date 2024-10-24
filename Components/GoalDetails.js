@@ -3,15 +3,16 @@ import React, { useEffect, useState } from "react";
 import PressableButton from "./PressableButton";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { updateDB } from "../Firebase/firestoreHelper";
-import GoalUsers from "./GoalUsers";
+import GoalUsers from "./GoalUsers"; 
 
 export default function GoalDetails({ navigation, route }) {
   const [warning, setWarning] = useState(false);
+  const goalId = route.params.goalData.id;
 
   function warningHandler() {
     setWarning(true);
     navigation.setOptions({ title: "Warning!" });
-    updateDB(route.params.goalData.id, { warning: true }, "goals");
+    updateDB(goalId, { warning: true }, "goals");
   }
 
   useEffect(() => {
@@ -39,13 +40,13 @@ export default function GoalDetails({ navigation, route }) {
       {route.params ? (
         <Text style={warning && styles.warningStyle}>
           This is details of a goal with text {route.params.goalData.text} and
-          id {route.params.goalData.id}
+          id {goalId}
         </Text>
       ) : (
         <Text style={warning && styles.warningStyle}>More details</Text>
       )}
       <Button title="More Details" onPress={moreDetailsHandler} />
-      <GoalUsers /> 
+      <GoalUsers goalId={goalId} /> 
     </View>
   );
 }

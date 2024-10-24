@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, ActivityIndicator, FlatList } from "react-native";
 import { addDocToSubcollection, getDocsFromSubcollection } from "../Firebase/firestoreHelper";
 
-export default function GoalUsers() {
+export default function GoalUsers({ goalId }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const goalId = "your-goal-id"; 
 
   useEffect(() => {
     async function fetchUsers() {
@@ -36,7 +35,7 @@ export default function GoalUsers() {
     }
 
     fetchUsers();
-  }, []);
+  }, [goalId]);
 
   if (loading) {
     return <ActivityIndicator size="large" color="purple" />;
