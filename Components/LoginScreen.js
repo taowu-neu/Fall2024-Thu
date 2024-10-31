@@ -1,13 +1,23 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
+import { auth } from "../Firebase/firebaseSetup";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleLogin() {
-    console.log("Login attempt with email:", email);
-    // Implement Firebase Authentication login logic here
+  async function handleLogin() {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      console.log("User logged in:", user);
+      Alert.alert("Success", "Login successful!");
+      navigation.navigate("Home");
+    } catch (error) {
+      console.log("Login error:", error);
+      Alert.alert("Login Error", error.message);
+    }
   }
 
   return (
