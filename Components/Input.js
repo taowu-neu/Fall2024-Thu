@@ -1,5 +1,4 @@
 import {
-  Alert,
   Button,
   Modal,
   StyleSheet,
@@ -7,20 +6,26 @@ import {
   TextInput,
   View,
   Image,
+  Alert,
 } from "react-native";
 import React, { useState } from "react";
 
 export default function Input({
   textInputFocus,
   inputHandler,
-  isModalVisible,
+  modalVisible,
   dismissModal,
 }) {
   const [text, setText] = useState("");
   const [blur, setBlur] = useState(false);
   const minimumChar = 3;
+
+  function updateText(changedText) {
+    setText(changedText);
+  }
   function handleConfirm() {
-    // console.log(text);
+    // call the callback fn received from App.js
+    // pass what user has typed
     inputHandler(text);
     setText("");
   }
@@ -38,7 +43,7 @@ export default function Input({
     ]);
   }
   return (
-    <Modal animationType="slide" visible={isModalVisible} transparent={true}>
+    <Modal animationType="slide" visible={modalVisible} transparent={true}>
       <View style={styles.container}>
         <View style={styles.modalContainer}>
           <Image
@@ -57,13 +62,10 @@ export default function Input({
           <TextInput
             autoFocus={textInputFocus}
             placeholder="Type something"
-            autoCorrect={true}
             keyboardType="default"
-            value={text}
             style={styles.input}
-            onChangeText={(changedText) => {
-              setText(changedText);
-            }}
+            value={text}
+            onChangeText={updateText}
             onBlur={() => {
               setBlur(true);
             }}
@@ -71,7 +73,6 @@ export default function Input({
               setBlur(false);
             }}
           />
-
           {blur ? (
             text.length >= minimumChar ? (
               <Text>Thank you</Text>
@@ -102,25 +103,27 @@ export default function Input({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: "white",
+
     alignItems: "center",
     justifyContent: "center",
+  },
+  modalContainer: {
+    backgroundColor: "#aaa",
+    borderRadius: 5,
+    alignItems: "center",
   },
   input: {
     borderColor: "purple",
     borderWidth: 2,
     padding: 5,
-    marginVertical: 10,
-  },
-  modalContainer: {
-    borderRadius: 6,
-    backgroundColor: "#999",
-    alignItems: "center",
+    color: "blue",
+    marginVertical: 5,
   },
   buttonContainer: {
     width: "30%",
     margin: 10,
   },
   buttonsRow: { flexDirection: "row" },
+
   image: { width: 100, height: 100 },
 });

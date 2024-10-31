@@ -13,18 +13,19 @@ export async function writeToDB(data, collectionName) {
     const docRef = await addDoc(collection(database, collectionName), data);
     console.log(docRef);
   } catch (err) {
-    console.log("write to db ", err);
+    console.log("Write to DB ", err);
   }
 }
 
-export async function deleteFromDB(deletedId, collectionName) {
+export async function deleteFromDB(deleteId, collectionName) {
   try {
-    await deleteDoc(doc(database, collectionName, deletedId));
+    await deleteDoc(doc(database, collectionName, deleteId));
+    //we have also delete all docs in a the users subcollection
+    deleteAllFromDB(`goals/${deleteId}/users`);
   } catch (err) {
-    console.log("delete from DB ", err);
+    console.log("delete from db ", err);
   }
 }
-
 export async function updateDB(id, data, collectionName) {
   try {
     await setDoc(doc(database, collectionName, id), data, { merge: true });
@@ -35,50 +36,25 @@ export async function updateDB(id, data, collectionName) {
 
 export async function deleteAllFromDB(collectionName) {
   try {
-    //get all the documents in the collection
     const querySnapshot = await getDocs(collection(database, collectionName));
     querySnapshot.forEach((docSnapshot) => {
-      deleteDoc(doc(database, collectionName, docSnapshot.id));
+      deleteFromDB(docSnapshot.id, collectionName);
     });
+    //delete all docs in users subcollection
   } catch (err) {
-    console.log("delete all ", err);
+    console.log("delete all", err);
   }
 }
 
-export async function addDocToSubcollection(data, collectionName, subCollectionName, docId) {
+export async function readAllDocs(collectionName) {
   try {
-    const docRef = await addDoc(
-      collection(database, collectionName, docId, subCollectionName),
-      data
-    );
-    console.log("Document written with ID: ", docRef.id);
-  } catch (err) {
-    console.error("Error adding document: ", err);
-  }
-}
-
-export async function getDocsFromSubcollection(collectionName, subCollectionName, docId) {
-  try {
-    const querySnapshot = await getDocs(
-      collection(database, collectionName, docId, subCollectionName)
-    );
-    let documents = [];
-    querySnapshot.forEach((docSnapshot) => {
-      documents.push({ ...docSnapshot.data(), id: docSnapshot.id });
+    const querySnapshot = await getDocs(collection(database, collectionName));
+    let newArray = [];
+    querySnapshot.forEach((docSnap) => {
+      newArray.push(docSnap.data());
     });
-    return documents;
+    return newArray;
   } catch (err) {
-    console.error("Error getting documents: ", err);
-    return [];
+    console.log("read all docs ", err);
   }
 }
-
-export async function deleteDocFromSubcollection(collectionName, subCollectionName, docId, subDocId) {
-  try {
-    await deleteDoc(doc(database, collectionName, docId, subCollectionName, subDocId));
-    console.log(`Document with ID ${subDocId} deleted successfully.`);
-  } catch (err) {
-    console.error("Error deleting document: ", err);
-  }
-}
-

@@ -1,13 +1,12 @@
 import { StatusBar } from "expo-status-bar";
 import {
+  Alert,
   Button,
+  FlatList,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   View,
-  FlatList,
-  Alert,
 } from "react-native";
 import Header from "./Header";
 import { useEffect, useState } from "react";
@@ -16,67 +15,81 @@ import GoalItem from "./GoalItem";
 import PressableButton from "./PressableButton";
 import { database } from "../Firebase/firebaseSetup";
 import {
-  writeToDB,
-  deleteFromDB,
   deleteAllFromDB,
+  deleteFromDB,
+  writeToDB,
 } from "../Firebase/firestoreHelper";
 import { collection, onSnapshot } from "firebase/firestore";
 
 export default function Home({ navigation }) {
-  const [receivedData, setReceivedData] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [goals, setGoals] = useState([]);
-  const appName = "My app!";
-  // update to receive data
+  const appName = "My app";
+  const collectionName = "goals";
   useEffect(() => {
+    //querySnapshot is a list/array of documentSnapshots
     const unsubscribe = onSnapshot(
-      collection(database, "goals"),
+      collection(database, collectionName),
       (querySnapshot) => {
+        //define an array
         let newArray = [];
         querySnapshot.forEach((docSnapshot) => {
+          //populate the array
           newArray.push({ ...docSnapshot.data(), id: docSnapshot.id });
+          console.log(docSnapshot.id);
         });
+        console.log(newArray);
+        //setGoals with this array
         setGoals(newArray);
       }
     );
     return () => unsubscribe();
   }, []);
+  //update this fn to receive data
   function handleInputData(data) {
-    console.log("App.js ", data);
+    //log the data to console
+    console.log("App ", data);
+    // declare a JS object
     let newGoal = { text: data };
-    writeToDB(newGoal, "goals");
-    //make a new obj and store the received data as the obj's text property
+    // add the newGoal to db
+    //call writeToDB
+    writeToDB(newGoal, collectionName);
+
+    // update the goals array to have newGoal as an item
+    //async
+
     // setGoals((prevGoals) => {
     //   return [...prevGoals, newGoal];
     // });
-    // setReceivedData(data);
-    setModalVisible(false);
+    //updated goals is not accessible here
+    setIsModalVisible(false);
   }
   function dismissModal() {
-    setModalVisible(false);
-  }
-  function handleGoalDelete(deletedId) {
-    // setGoals((prevGoals) => {
-    //   return prevGoals.filter((goalObj) => {
-    //     return goalObj.id != deletedId;
-    //   });
-    // });
-    deleteFromDB(deletedId, "goals");
+    setIsModalVisible(false);
   }
 
-  // function handleGoalPress(pressedGoal) {
-  //   //receive the goal obj
-  //   console.log(pressedGoal);
-  //   // navigate to GoalDetails and pass goal obj as params
-  //   navigation.navigate("Details", { goalData: pressedGoal });
+  // function goalPressHandler(pressedGoal) {
+  //   //which goal?
+  //   console.log("goal pressed");
+  //   navigation.navigate("Details", { goalObj: pressedGoal });
   // }
+  function goalDeleteHandler(deletedId) {
+    console.log("goal deleted ", deletedId);
+    //Use array.filter to update the array by removing the deletedId
+    deleteFromDB(deletedId, collectionName);
+    // setGoals((prevGoals) => {
+    //   return prevGoals.filter((goal) => {
+    //     return goal.id != deletedId;
+    //   });
+    // });
+  }
   function deleteAll() {
     Alert.alert("Delete All", "Are you sure you want to delete all goals?", [
       {
         text: "Yes",
         onPress: () => {
           // setGoals([]);
-          deleteAllFromDB("goals");
+          deleteAllFromDB(collectionName);
         },
       },
       { text: "No", style: "cancel" },
@@ -87,10 +100,10 @@ export default function Home({ navigation }) {
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
       <View style={styles.topView}>
-        <Header name={appName}></Header>
+        <Header name={appName} />
         <PressableButton
-          pressedHandler={function () {
-            setModalVisible(true);
+          pressedFunction={() => {
+            setIsModalVisible(true);
           }}
           componentStyle={{ backgroundColor: "purple" }}
         >
@@ -98,19 +111,28 @@ export default function Home({ navigation }) {
         </PressableButton>
         {/* <Button
           title="Add a Goal"
-          onPress={function () {
-            setModalVisible(true);
+          onPress={() => {
+            setIsModalVisible(true);
           }}
         /> */}
       </View>
       <Input
         textInputFocus={true}
         inputHandler={handleInputData}
-        isModalVisible={modalVisible}
+        modalVisible={isModalVisible}
         dismissModal={dismissModal}
       />
       <View style={styles.bottomView}>
         <FlatList
+          ListEmptyComponent={
+            <Text style={styles.header}>No goals to show</Text>
+          }
+          ListHeaderComponent={
+            goals.length && <Text style={styles.header}>My Goals List</Text>
+          }
+          ListFooterComponent={
+            goals.length && <Button title="Delete all" onPress={deleteAll} />
+          }
           ItemSeparatorComponent={({ highlighted }) => {
             return (
               <View
@@ -121,28 +143,20 @@ export default function Home({ navigation }) {
               />
             );
           }}
-          ListEmptyComponent={
-            <Text style={styles.header}>No goals to show</Text>
-          }
-          ListHeaderComponent={
-            goals.length && <Text style={styles.header}>My Goals List</Text>
-          }
-          ListFooterComponent={
-            goals.length && <Button title="Delete all" onPress={deleteAll} />
-          }
-          contentContainerStyle={styles.scrollViewContainer}
+          contentContainerStyle={styles.scrollViewContent}
           data={goals}
           renderItem={({ item, separators }) => {
             return (
               <GoalItem
                 separators={separators}
-                deleteHandler={handleGoalDelete}
                 goalObj={item}
+                handleDelete={goalDeleteHandler}
+                // handlePress={goalPressHandler}
               />
             );
           }}
         />
-        {/* <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+        {/* <ScrollView contentContainerStyle={styles.scrollViewContent}>
           {goals.map((goalObj) => {
             return (
               <View key={goalObj.id} style={styles.textContainer}>
@@ -163,23 +177,21 @@ const styles = StyleSheet.create({
     // alignItems: "center",
     justifyContent: "center",
   },
-  scrollViewContainer: {
-    alignItems: "center",
-  },
-
-  topView: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  bottomView: { flex: 4, backgroundColor: "#dcd" },
   header: {
     color: "indigo",
     fontSize: 25,
     marginTop: 10,
   },
+
+  topView: { flex: 1, alignItems: "center", justifyContent: "space-evenly" },
+  bottomView: { flex: 4, backgroundColor: "#dcd" },
+
+  scrollViewContent: {
+    alignItems: "center",
+  },
   buttonText: {
     color: "white",
     fontSize: 20,
+    padding: 5,
   },
 });
