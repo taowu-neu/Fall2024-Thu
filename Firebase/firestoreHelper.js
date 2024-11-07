@@ -20,6 +20,8 @@ export async function writeToDB(data, collectionName) {
 export async function deleteFromDB(deletedId, collectionName) {
   try {
     await deleteDoc(doc(database, collectionName, deletedId));
+    // also delete the users subcollections if exists
+    deleteAllFromDB(`goals/${deletedId},users`);
   } catch (err) {
     console.log("delete from DB ", err);
   }
@@ -45,40 +47,17 @@ export async function deleteAllFromDB(collectionName) {
   }
 }
 
-export async function addDocToSubcollection(data, collectionName, subCollectionName, docId) {
+export async function getAllDocuments(collectionName) {
   try {
-    const docRef = await addDoc(
-      collection(database, collectionName, docId, subCollectionName),
-      data
-    );
-    console.log("Document written with ID: ", docRef.id);
+    const querySnapshot = await getDocs(collection(database, collectionName));
+    const data = [];
+    if (!querySnapshot.empty) {
+      querySnapshot.forEach((docSnap) => {
+        data.push(docSnap.data());
+      });
+    }
+    return data;
   } catch (err) {
-    console.error("Error adding document: ", err);
+    console.log("get all docs ", err);
   }
 }
-
-export async function getDocsFromSubcollection(collectionName, subCollectionName, docId) {
-  try {
-    const querySnapshot = await getDocs(
-      collection(database, collectionName, docId, subCollectionName)
-    );
-    let documents = [];
-    querySnapshot.forEach((docSnapshot) => {
-      documents.push({ ...docSnapshot.data(), id: docSnapshot.id });
-    });
-    return documents;
-  } catch (err) {
-    console.error("Error getting documents: ", err);
-    return [];
-  }
-}
-
-export async function deleteDocFromSubcollection(collectionName, subCollectionName, docId, subDocId) {
-  try {
-    await deleteDoc(doc(database, collectionName, docId, subCollectionName, subDocId));
-    console.log(`Document with ID ${subDocId} deleted successfully.`);
-  } catch (err) {
-    console.error("Error deleting document: ", err);
-  }
-}
-
