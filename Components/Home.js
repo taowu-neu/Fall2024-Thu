@@ -27,8 +27,10 @@ export default function Home({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [goals, setGoals] = useState([]);
   const appName = "My app!";
+  // update to receive data
   useEffect(() => {
     const unsubscribe = onSnapshot(
+      // we should update the listener to only listen to our own data
       query(
         collection(database, "goals"),
         where("owner", "==", auth.currentUser.uid)
