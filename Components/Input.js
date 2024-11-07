@@ -18,26 +18,35 @@ export default function Input({
   dismissModal,
 }) {
   const [text, setText] = useState("");
+  const [imageUri, setImageUri] = useState(null); // State variable for image URI
   const [blur, setBlur] = useState(false);
   const minimumChar = 3;
-  function handleConfirm() {
-    // console.log(text);
-    inputHandler(text);
-    setText("");
+
+  function handleImageTaken(uri) {
+    setImageUri(uri); // Store the received image URI in state
   }
+
+  function handleConfirm() {
+    // Pass both text and image URI to Home.js
+    inputHandler({ text, imageUri });
+    setText("");
+    setImageUri(null); // Reset image URI after confirmation
+  }
+
   function handleCancel() {
-    // hide the modal
     Alert.alert("Cancel", "Are you sure you want to cancel", [
       { text: "cancel", style: "cancel" },
       {
         text: "ok",
         onPress: () => {
           setText("");
+          setImageUri(null); // Reset image URI on cancel
           dismissModal();
         },
       },
     ]);
   }
+
   return (
     <Modal animationType="slide" visible={isModalVisible} transparent={true}>
       <View style={styles.container}>
@@ -82,7 +91,9 @@ export default function Input({
           ) : (
             text && <Text>{text.length}</Text>
           )}
-          <ImageManager />
+
+          <ImageManager onImageTaken={handleImageTaken} />
+
           <View style={styles.buttonsRow}>
             <View style={styles.buttonContainer}>
               <Button title="Cancel" onPress={handleCancel} />
@@ -104,7 +115,6 @@ export default function Input({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
   },
