@@ -13,19 +13,20 @@ export async function writeToDB(data, collectionName) {
     const docRef = await addDoc(collection(database, collectionName), data);
     console.log(docRef);
   } catch (err) {
-    console.log("Write to DB ", err);
+    console.log("write to db ", err);
   }
 }
 
-export async function deleteFromDB(deleteId, collectionName) {
+export async function deleteFromDB(deletedId, collectionName) {
   try {
-    await deleteDoc(doc(database, collectionName, deleteId));
-    //we have also delete all docs in a the users subcollection
-    deleteAllFromDB(`goals/${deleteId}/users`);
+    await deleteDoc(doc(database, collectionName, deletedId));
+    // also delete the users subcollections if exists
+    deleteAllFromDB(`goals/${deletedId},users`);
   } catch (err) {
-    console.log("delete from db ", err);
+    console.log("delete from DB ", err);
   }
 }
+
 export async function updateDB(id, data, collectionName) {
   try {
     await setDoc(doc(database, collectionName, id), data, { merge: true });
@@ -36,25 +37,27 @@ export async function updateDB(id, data, collectionName) {
 
 export async function deleteAllFromDB(collectionName) {
   try {
+    //get all the documents in the collection
     const querySnapshot = await getDocs(collection(database, collectionName));
     querySnapshot.forEach((docSnapshot) => {
-      deleteFromDB(docSnapshot.id, collectionName);
+      deleteDoc(doc(database, collectionName, docSnapshot.id));
     });
-    //delete all docs in users subcollection
   } catch (err) {
-    console.log("delete all", err);
+    console.log("delete all ", err);
   }
 }
 
-export async function readAllDocs(collectionName) {
+export async function getAllDocuments(collectionName) {
   try {
     const querySnapshot = await getDocs(collection(database, collectionName));
-    let newArray = [];
-    querySnapshot.forEach((docSnap) => {
-      newArray.push(docSnap.data());
-    });
-    return newArray;
+    const data = [];
+    if (!querySnapshot.empty) {
+      querySnapshot.forEach((docSnap) => {
+        data.push(docSnap.data());
+      });
+    }
+    return data;
   } catch (err) {
-    console.log("read all docs ", err);
+    console.log("get all docs ", err);
   }
 }

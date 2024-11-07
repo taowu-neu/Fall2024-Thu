@@ -1,17 +1,17 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
-import { readAllDocs, writeToDB } from "../Firebase/firestoreHelper";
+import { getAllDocuments, writeToDB } from "../Firebase/firestoreHelper";
 
-export default function GoalUsers({ goalId }) {
+export default function GoalUsers({ id }) {
   const [users, setUsers] = useState([]);
   useEffect(() => {
+    // fetch data
     async function fetchData() {
       try {
-        // check if there is any data in users subcollection
-        const dataFromDB = await readAllDocs(`goals/${goalId}/users`);
+        // check and see if we already have users data in the database, if so use that, if not fetch from API
+        const dataFromDB = await getAllDocuments(`goals/${id}/users`);
         if (dataFromDB.length) {
-          // if there is call setUsers with that data
-          console.log("data from DB");
+          console.log("reading data from DB");
           setUsers(
             dataFromDB.map((user) => {
               return user.name;
@@ -19,29 +19,32 @@ export default function GoalUsers({ goalId }) {
           );
           return;
         }
-        // if not then proceed with fetching from fake API
-        console.log("data from API");
+        console.log("reading data from API");
 
         const response = await fetch(
-          "https://jsonplaceholder.typicode.com/users"
+          "https://jsonplaceholder.typicode.com/users/"
         );
+        // promise is not getting rejected if there is an HTTP error (status code not in 200s)
+        // we have to check response.ok
         if (!response.ok) {
-          throw new Error(`HTTP error happened with status ${response.status}`);
+          // what to do in case of an HTTP error e.g. 404
+          // throw an error
+          throw new Error(
+            `An HTTP error happened with status: ${response.status}`
+          );
         }
-        // We only get here if the response.ok is true. let's extract data
+        // this code will only execute if the response.ok is true
+        //extract data
         const data = await response.json();
-        // write data to firestore using writeToDB
-        data.forEach((user) => {
-          writeToDB(user, `goals/${goalId}/users`);
-        });
+        // set the users state variable from the data
+        data.forEach((user) => writeToDB(user, `goals/${id}/users`));
         setUsers(
           data.map((user) => {
             return user.name;
           })
         );
-        // setUsers(data);
       } catch (err) {
-        console.log("fetch users data ", err);
+        console.log("fetch user data ", err);
       }
     }
     fetchData();

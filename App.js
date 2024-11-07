@@ -1,66 +1,99 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import Home from "./Components/Home";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./Firebase/firebaseSetup";
-import { TouchableOpacity, ActivityIndicator, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-
-import Home from "./Components/Home";
 import GoalDetails from "./Components/GoalDetails";
-import LoginScreen from "./Components/LoginScreen";
-import SignupScreen from "./Components/SignupScreen";
+import { Button } from "react-native";
+import Login from "./Components/Login";
+import Signup from "./Components/Signup";
+import { auth } from "./Firebase/firebaseSetup";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import Profile from "./Components/Profile";
+import PressableButton from "./Components/PressableButton";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 const Stack = createNativeStackNavigator();
 
+const authStack = (
+  <>
+    <Stack.Screen name="Signup" component={Signup} />
+    <Stack.Screen name="Login" component={Login} />
+  </>
+);
+const appStack = (
+  <>
+    <Stack.Screen
+      name="Home"
+      component={Home}
+      options={({ navigation }) => {
+        return {
+          title: "My Goals",
+          headerRight: () => {
+            return (
+              <PressableButton
+                componentStyle={{ backgroundColor: "purple" }}
+                pressedHandler={() => {
+                  navigation.navigate("Profile");
+                }}
+              >
+                <AntDesign name="user" size={24} color="white" />
+              </PressableButton>
+            );
+          },
+        };
+      }}
+    />
+    <Stack.Screen
+      name="Details"
+      component={GoalDetails}
+      options={({ route }) => {
+        return {
+          title: route.params ? route.params.goalData.text : "More Details",
+          // headerRight: () => {
+          //   return (
+          //     <Button
+          //       title="Warning"
+          //       onPress={() => {
+          //         console.log("warning");
+          //       }}
+          //     />
+          //   );
+          // },
+        };
+      }}
+    />
+    <Stack.Screen
+      name="Profile"
+      component={Profile}
+      options={{
+        headerRight: () => {
+          return (
+            <PressableButton
+              componentStyle={{ backgroundColor: "purple" }}
+              pressedHandler={() => {
+                signOut(auth);
+              }}
+            >
+              <AntDesign name="logout" size={24} color="white" />
+            </PressableButton>
+          );
+        },
+      }}
+    />
+  </>
+);
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsAuthenticated(!!user);
-      setIsLoading(false);
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsUserLoggedIn(true);
+      } else {
+        setIsUserLoggedIn(false);
+      }
+      //based on the user variable, set the state variable isUserLoggedIn
     });
-    return () => unsubscribe();
   }, []);
-
-  if (isLoading) {
-
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="purple" />
-      </View>
-    );
-  }
-
-  const AuthStack = (
-    <>
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Signup" component={SignupScreen} />
-    </>
-  );
-
-  const AppStack = (
-    <>
-      <Stack.Screen
-        name="Home"
-        component={Home}
-        options={({ navigation }) => ({
-          title: "All My Goals",
-          headerRight: () => (
-            <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-              <Ionicons name="person-circle-outline" size={28} color="white" />
-            </TouchableOpacity>
-          ),
-        })}
-      />
-      <Stack.Screen name="Details" component={GoalDetails} />
-      <Stack.Screen name="Profile" component={Profile} options={{ title: "Profile" }} />
-    </>
-  );
-
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -69,7 +102,7 @@ export default function App() {
           headerTintColor: "white",
         }}
       >
-        {isAuthenticated ? AppStack : AuthStack}
+        {isUserLoggedIn ? appStack : authStack}
       </Stack.Navigator>
     </NavigationContainer>
   );
