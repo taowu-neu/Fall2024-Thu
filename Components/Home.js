@@ -81,7 +81,7 @@ export default function Home({ navigation }) {
     // add info about owner of the goal
     newGoal = { ...newGoal, owner: auth.currentUser.uid };
     if (uri) {
-      newGoal = { ...newGoal, uri: uri };
+      newGoal = { ...newGoal, imageUri: uri };
     }
     writeToDB(newGoal, "goals");
     //make a new obj and store the received data as the obj's text property
