@@ -11,7 +11,14 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import Profile from "./Components/Profile";
 import PressableButton from "./Components/PressableButton";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import Map from "./Components/Map";
+import * as Notifications from "expo-notifications";
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => {
+    return { shouldShowAlert: true };
+  },
+});
 const Stack = createNativeStackNavigator();
 
 const authStack = (
@@ -80,8 +87,10 @@ const appStack = (
         },
       }}
     />
+    <Stack.Screen name="Map" component={Map} />
   </>
 );
+
 export default function App() {
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
   useEffect(() => {
