@@ -22,6 +22,7 @@ import {
 } from "../Firebase/firestoreHelper";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { ref, uploadBytesResumable } from "firebase/storage";
+import * as Notifications from "expo-notifications";
 
 export default function Home({ navigation }) {
   const [receivedData, setReceivedData] = useState("");
@@ -29,6 +30,14 @@ export default function Home({ navigation }) {
   const [goals, setGoals] = useState([]);
   const appName = "My app!";
   // update to receive data
+  useEffect(() => {
+    console.log("Home use effect");
+    async function getPushToken() {
+      const pushToken = await Notifications.getExpoPushTokenAsync({});
+      console.log(pushToken);
+    }
+    getPushToken();
+  }, []);
   useEffect(() => {
     const unsubscribe = onSnapshot(
       // we should update the listener to only listen to our own data
