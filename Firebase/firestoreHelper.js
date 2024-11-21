@@ -4,6 +4,7 @@ import {
   deleteDoc,
   doc,
   getDocs,
+  getDoc,
   setDoc,
 } from "firebase/firestore";
 import { database } from "./firebaseSetup";
@@ -59,5 +60,19 @@ export async function getAllDocuments(collectionName) {
     return data;
   } catch (err) {
     console.log("get all docs ", err);
+  }
+}
+
+export async function readOneDocument(id, collectionName) {
+  try {
+    const docSnapshot = await getDoc(doc(database, collectionName, id));
+
+    if (docSnapshot.exists()) {
+      console.log(docSnapshot.data());
+      return docSnapshot.data();
+    }
+    return null;
+  } catch (err) {
+    console.log("get one doc ", err);
   }
 }

@@ -10,7 +10,7 @@ import {
 import React, { useEffect, useState } from "react";
 import * as Location from "expo-location";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { updateDB } from "../Firebase/firestoreHelper";
+import { readOneDocument, updateDB } from "../Firebase/firestoreHelper";
 import { auth } from "../Firebase/firebaseSetup";
 const windowWidth = Dimensions.get("window").width;
 
@@ -20,12 +20,22 @@ export default function LocationManager() {
   const [location, setLocation] = useState(null);
   const [response, requestPermission] = Location.useForegroundPermissions();
   useEffect(() => {
+    async function getUserData() {
+      const userData = await readOneDocument(auth.currentUser.uid, "users");
+      if (userData && userData.location) {
+        setLocation(userData.location);
+      }
+    }
+    getUserData();
+  }, []);
+  useEffect(() => {
     if (route.params) {
       setLocation(route.params.selectedLocation);
     }
     //setLocation
   }, [route]);
   function saveLocationHandler() {
+    //call updateDB from firestoreHelper and save location in a user doc with id= user's uid
     updateDB(auth.currentUser.uid, { location }, "users");
     navigation.navigate("Home");
   }
@@ -77,7 +87,11 @@ export default function LocationManager() {
           style={styles.image}
         />
       )}
-      <Button disabled={!location} title="Save My Location" onPress={saveLocationHandler}/>
+      <Button
+        disabled={!location}
+        title="Save My Location"
+        onPress={saveLocationHandler}
+      />
     </View>
   );
 }
